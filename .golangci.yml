@@ -14,6 +14,8 @@ run:
 linters:
   default: all
   disable:
+    - noinlineerr
+    - wsl_v5
     # containedctx is a linter that detects struct contained context.Context field [fast: true, auto-fix: false]
     # using contextcheck which looks more active
     # - containedctx
