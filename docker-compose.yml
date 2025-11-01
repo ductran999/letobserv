@@ -1,0 +1,41 @@
+services:
+  products_db:
+    image: postgres:16.4-alpine
+    container_name: pg_products_service
+    environment:
+      POSTGRES_USER: ${DB_PRODUCT_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PRODUCT_PASSWORD}
+      POSTGRES_DB: ${DB_PRODUCT_DATABASE}
+    ports:
+      - "127.0.0.1:${DB_PRODUCT_PORT}:5432"
+    networks:
+      - localnet
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U test -d products_dat"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+
+  migrate:
+    image: migrate/migrate
+    container_name: ${SERVICE_ENV}_migrate_${PRODUCT_SERVICE_NAME}
+    depends_on:
+      products_db:
+        condition: service_healthy
+    entrypoint:
+      [
+        "sh",
+        "-c",
+        "migrate -path=/migrations -database=postgres://${DB_PRODUCT_USERNAME}:${DB_PRODUCT_PASSWORD}@products_db:5432/${DB_PRODUCT_DATABASE}?sslmode=disable up",
+      ]
+    restart: "no"
+    volumes:
+      - ./migrations:/migrations
+    networks:
+      - localnet
+
+networks:
+  localnet:
+    driver: bridge

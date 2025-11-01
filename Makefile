@@ -22,3 +22,25 @@ lint: ## Run linters
 deps: ## install library
 	go install github.com/vektra/mockery/v3@v3.4.0
 	go install github.com/wadey/gocovmerge@latest
+
+stop: ## Stop demo 
+	docker-compose down
+
+restart: ## Reset demo
+	docker-compose down
+	@if [ ! -f .env ]; then \
+		cp .env.example .env; \
+		echo "Copied .env.example → .env"; \
+	else \
+		echo ".env already exists, skipping copy."; \
+	fi
+	docker-compose up -d
+
+setup: ## Setup demo dependencies
+	@if [ ! -f .env ]; then \
+		cp .env.example .env; \
+		echo "Copied .env.example → .env"; \
+	else \
+		echo ".env already exists, skipping copy."; \
+	fi
+	docker-compose up -d
