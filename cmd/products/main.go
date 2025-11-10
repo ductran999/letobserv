@@ -31,13 +31,11 @@ func init() {
 	}
 }
 
-var (
-	serviceName  = os.Getenv("PRODUCT_SERVICE_NAME")
-	collectorURL = os.Getenv("OTEL_EXPORTER_OTLP_ENDPOINT")
-	insecure     = os.Getenv("INSECURE_MODE")
-)
-
 func initTracer() func(context.Context) error {
+	serviceName := os.Getenv("PRODUCT_SERVICE_NAME")
+	collectorURL := os.Getenv("OTEL_EXPORTER_OTLP_ENDPOINT")
+	insecure := os.Getenv("INSECURE_MODE")
+
 	var secureOption otlptracegrpc.Option
 
 	if strings.ToLower(insecure) == "false" || insecure == "0" || strings.ToLower(insecure) == "f" {
@@ -103,19 +101,18 @@ func main() {
 	if err != nil {
 		log.Fatalln("failed when connecting to db", err)
 	}
-	defer conn.Close() //nolint
 
 	if os.Getenv("SERVICE_ENV") == common.ProdEnv {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
-	repo := repo.NewProductRepo(conn.DB())
+	repo := repo.NewProductRepo(conn)
 	uc := usecase.NewProductUseCase(repo)
 	hdl := handler.NewProductHandler(uc)
 
 	// Simple reduce stock API
 	r := gin.Default()
-	r.Use(otelgin.Middleware(serviceName))
+	r.Use(otelgin.Middleware("product-service"))
 	r.PATCH("/api/products/:id/reduce-stock", hdl.ReduceProductStock)
 	r.GET("/health", hdl.CheckHealth)
 
