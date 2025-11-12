@@ -24,7 +24,7 @@ func NewOrderUseCase(repo port.OrderRepo) port.OrderUseCase {
 func (uc *OrderUseCase) PlacePOrder(ctx context.Context) error {
 	time.Sleep(200 * time.Millisecond)
 
-	resp, err := uc.httpClient.Patch(ctx, "http://localhost:11000/api/products/1/reduce-stock", nil, nil)
+	resp, err := uc.httpClient.Patch(ctx, "http://localhost:11000/api/products/2/reduce-stock", nil, nil)
 	if err != nil {
 		return err
 	}
