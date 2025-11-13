@@ -198,6 +198,7 @@ linters:
     # FUTURE: can apply this rules when this syntax are family to almost developer. This syntax only apply for go 1.22+
     - intrange
     - tagalign
+    - wsl_v5
 
   exclusions:
     rules:
