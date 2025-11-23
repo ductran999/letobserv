@@ -6,6 +6,7 @@ import (
 	"github.com/ductran999/dbkit"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 	"gorm.io/plugin/opentelemetry/tracing"
 )
 
@@ -21,7 +22,9 @@ func ConnectDB(pgConf dbkit.PostgreSQLConfig) (*gorm.DB, error) {
 		pgConf.TimeZone,
 	)
 
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+		Logger: logger.Default,
+	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to PostgreSQL: %w", err)
 	}

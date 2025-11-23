@@ -8,12 +8,29 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/hyperdxio/opentelemetry-go/otelzerolog"
+	"github.com/hyperdxio/opentelemetry-logs-go/exporters/otlp/otlplogs"
+	"github.com/hyperdxio/opentelemetry-logs-go/exporters/otlp/otlplogs/otlplogshttp"
+	sdk "github.com/hyperdxio/opentelemetry-logs-go/sdk/logs"
 	"github.com/rs/zerolog"
+	"go.opentelemetry.io/otel/sdk/resource"
+	semconv "go.opentelemetry.io/otel/semconv/v1.20.0"
 	"go.opentelemetry.io/otel/trace"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
 var gLogger zerolog.Logger
+
+// configure common attributes for all logs
+func newResource() *resource.Resource {
+	hostName, _ := os.Hostname()
+	return resource.NewWithAttributes(
+		semconv.SchemaURL,
+		semconv.ServiceName("otelzerolog-example"),
+		semconv.ServiceVersion("1.0.0"),
+		semconv.HostName(hostName),
+	)
+}
 
 // New initializes and configures the global logger instance.
 // By default, logging to file is disabled.
@@ -53,13 +70,26 @@ func New(serviceInfo ServiceInfo, options ...ConfigOption) error {
 		return err
 	}
 
-	// Create the zerolog instance with timestamp and context
+	// configure opentelemetry logger provider
+	exporter, _ := otlplogs.NewExporter(context.Background(), otlplogs.WithClient(otlplogshttp.NewClient(
+		otlplogshttp.WithEndpoint("localhost:4318"),
+		otlplogshttp.WithInsecure(),
+	)))
+	loggerProvider := sdk.NewLoggerProvider(
+		sdk.WithBatcher(exporter),
+		sdk.WithResource(newResource()),
+	)
+	hook := otelzerolog.NewHook(loggerProvider)
+
+	// Create zerolog instance with context fields
 	gLogger = zerolog.New(writers).With().
 		Timestamp().
 		Str("service_name", conf.ServiceInfo.Name).
 		Str("service_version", conf.ServiceInfo.Version).
 		Str("service_env", conf.ServiceInfo.Env).
-		Logger()
+		Logger().
+		Hook(hook) // Add telemetry Hook
+
 	return nil
 }
 

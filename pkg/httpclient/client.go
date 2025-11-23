@@ -50,9 +50,18 @@ func New() Client {
 		ExpectContinueTimeout: 1 * time.Second,
 	}
 
+	clientTransport := otelhttp.NewTransport(
+		transport,
+		otelhttp.WithSpanNameFormatter(func(operation string, req *http.Request) string {
+			fmt.Println(operation)
+			urlPath := req.URL.Host
+			return fmt.Sprintf("%s %s", req.Method, urlPath)
+		}),
+	)
+
 	return &httpClient{
 		client: &http.Client{
-			Transport: otelhttp.NewTransport(transport),
+			Transport: clientTransport,
 		},
 	}
 }
@@ -114,6 +123,10 @@ func (h *httpClient) doRequest(
 	for k, v := range headers {
 		req.Header.Set(k, v)
 	}
+
+	q := req.URL.Query() // lấy query hiện tại (nếu có)
+	q.Set("temp", "1")
+	req.URL.RawQuery = q.Encode()
 
 	// Perform the request
 	resp, err := h.client.Do(req)
