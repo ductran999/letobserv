@@ -1,3 +1,3 @@
 package common
 
-var ProdEnv = "production"
+var ProdEnv = "prod"
