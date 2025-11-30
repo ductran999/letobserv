@@ -3,14 +3,14 @@ services:
     image: ducnta99/letobserv-products
     container_name: products_service_app
     env_file:
-      - .env 
+      - product.env 
     environment:
-      DB_PRODUCT_HOST: products_db
-      DB_PRODUCT_PORT: 5432
-      PRODUCT_SERVICE_NAME: product_service
-      PRODUCT_SERVICE_PORT: 9420
+      DB_HOST: products_db
+      DB_PORT: 5432
+      SERVICE_NAME: product_service
+      SERVICE_PORT: 9420
     ports:
-      - "127.0.0.1:${PRODUCT_SERVICE_PORT}:9420"
+      - "127.0.0.1:${DB_PORT}:9420"
     networks:
       - localnet
     depends_on:
@@ -21,16 +21,18 @@ services:
   products_db:
     image: postgres:16.4-alpine
     container_name: pg_products_service
+    env_file:
+      - product.env 
     environment:
-      POSTGRES_USER: ${DB_PRODUCT_USERNAME}
-      POSTGRES_PASSWORD: ${DB_PRODUCT_PASSWORD}
-      POSTGRES_DB: ${DB_PRODUCT_DATABASE}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_DB: ${DB_DATABASE}
     ports:
-      - "127.0.0.1:${DB_PRODUCT_PORT}:5432"
+      - "127.0.0.1:${DB_PORT}:5432"
     networks:
       - localnet
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_PRODUCT_USERNAME} -d ${DB_PRODUCT_DATABASE}"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d ${DB_DATABASE}"]
       interval: 5s
       timeout: 5s
       retries: 5
