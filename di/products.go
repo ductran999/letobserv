@@ -9,6 +9,7 @@ import (
 
 	"github.com/ductran999/dbkit"
 	"github.com/ductran999/letobserv/configs"
+	"github.com/ductran999/letobserv/pkg/logger"
 	"github.com/ductran999/letobserv/services/common"
 	"github.com/ductran999/letobserv/services/products/handler"
 	"github.com/ductran999/letobserv/services/products/port"
@@ -34,6 +35,14 @@ func NewContainer(env *configs.ProductServiceEnv) (*ProductContainer, error) {
 	// Init db connection
 	if err := container.ConnectDB(); err != nil {
 		return nil, fmt.Errorf("init container failed: connect DB error: %w", err)
+	}
+
+	if err := logger.New(logger.ServiceInfo{
+		Name:    env.ServiceName,
+		Version: env.ServiceVersion,
+		Env:     env.ServiceEnv,
+	}); err != nil {
+		return nil, fmt.Errorf("init logger: %w", err)
 	}
 
 	container.InitRepo()
