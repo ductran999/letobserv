@@ -9,7 +9,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-func LoadConfig(configFile string) (*ProductServiceEnv, error) {
+func LoadProductConfig(configFile string) (*ProductServiceEnv, error) {
 	viper.SetConfigFile(configFile)
 	if err := viper.ReadInConfig(); err != nil {
 		log.Println("Warning: load config from file failed, default env will be applied:", err)

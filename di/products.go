@@ -27,7 +27,7 @@ type ProductContainer struct {
 	useCase port.ProductUseCase
 }
 
-func NewContainer(env *configs.ProductServiceEnv) (*ProductContainer, error) {
+func NewProductContainer(env *configs.ProductServiceEnv) (*ProductContainer, error) {
 	container := &ProductContainer{
 		Env: env,
 	}

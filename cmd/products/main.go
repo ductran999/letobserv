@@ -8,12 +8,12 @@ import (
 )
 
 func main() {
-	config, err := configs.LoadConfig("product.env")
+	config, err := configs.LoadProductConfig("product.env")
 	if err != nil {
 		log.Fatalln("failed to load product config:", err)
 	}
 
-	container, err := di.NewContainer(config)
+	container, err := di.NewProductContainer(config)
 	if err != nil {
 		log.Fatalln("failed to create new container:", err)
 	}
