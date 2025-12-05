@@ -8,10 +8,8 @@ require (
 	github.com/hyperdxio/opentelemetry-go/otelzerolog v0.0.2
 	github.com/hyperdxio/opentelemetry-logs-go v0.4.2
 	github.com/hyperdxio/otel-config-go v1.12.3
-	github.com/joho/godotenv v1.5.1
 	github.com/rs/zerolog v1.34.0
 	github.com/spf13/viper v1.21.0
-	go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin v0.63.0
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.49.0
 	go.opentelemetry.io/otel/sdk v1.38.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
