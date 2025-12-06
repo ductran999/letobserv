@@ -1,22 +1,22 @@
 services:
-  product_svc:
-    image: ducnta99/letobserv-products
-    container_name: products_service_app
-    env_file:
-      - product.env 
-    environment:
-      DB_HOST: products_db
-      DB_PORT: 5432
-      SERVICE_NAME: product_service
-      SERVICE_PORT: 9420
-    ports:
-      - "127.0.0.1:${DB_PORT}:9420"
-    networks:
-      - localnet
-    depends_on:
-      products_db:
-        condition: service_healthy
-    restart: unless-stopped
+  # product_svc:
+  #   image: ducnta99/letobserv-products
+  #   container_name: products_service_app
+  #   env_file:
+  #     - product.env 
+  #   environment:
+  #     DB_HOST: products_db
+  #     DB_PORT: 5432
+  #     SERVICE_NAME: product_service
+  #     SERVICE_PORT: 9420
+  #   ports:
+  #     - "127.0.0.1:${DB_PORT}:9420"
+  #   networks:
+  #     - localnet
+  #   depends_on:
+  #     products_db:
+  #       condition: service_healthy
+  #   restart: unless-stopped
 
   products_db:
     image: postgres:16.4-alpine
