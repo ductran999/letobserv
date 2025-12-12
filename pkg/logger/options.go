@@ -123,13 +123,13 @@ func WithLogFile(filePath string) ConfigOption {
 func WithLogRotation(maxSize, maxAge, maxBackups int, compress bool) ConfigOption {
 	return func(conf *config) error {
 		if maxSize <= 0 {
-			return fmt.Errorf("maxSize must be > 0")
+			return errors.New("maxSize must be > 0")
 		}
 		if maxAge < 0 {
-			return fmt.Errorf("maxAge cannot be negative")
+			return errors.New("maxAge cannot be negative")
 		}
 		if maxBackups < 0 {
-			return fmt.Errorf("maxBackups cannot be negative")
+			return errors.New("maxBackups cannot be negative")
 		}
 
 		conf.MaxSize = maxSize

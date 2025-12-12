@@ -2,7 +2,7 @@ package usecase
 
 import (
 	"context"
-	"fmt"
+	"errors"
 	"time"
 
 	"github.com/ductran999/letobserv/pkg/httpclient"
@@ -31,7 +31,7 @@ func (uc *OrderUseCase) PlacePOrder(ctx context.Context) error {
 	defer resp.Body.Close()
 
 	if resp.StatusCode > 300 {
-		return fmt.Errorf("failed")
+		return errors.New("failed")
 	}
 
 	return nil
