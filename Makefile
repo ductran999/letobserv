@@ -21,7 +21,6 @@ lint: ## Run linters
 .PHONY: deps
 deps: ## install library
 	go install github.com/vektra/mockery/v3@v3.4.0
-	go install github.com/wadey/gocovmerge@latest
 
 .PHONY: stop
 stop: ## Stop demo 
