@@ -28,7 +28,7 @@ services:
       POSTGRES_PASSWORD: ${DB_PASS}
       POSTGRES_DB: ${DB_DATABASE}
     ports:
-      - "127.0.0.1:${DB_PORT}:5432"
+      - "${DB_PORT}:5432"
     networks:
       - localnet
     healthcheck:
