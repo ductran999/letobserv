@@ -9,12 +9,14 @@ import (
 
 	"github.com/ductran999/dbkit"
 	"github.com/ductran999/letobserv/configs"
+	"github.com/ductran999/letobserv/internal/application/usecase"
+	"github.com/ductran999/letobserv/internal/consts"
+	"github.com/ductran999/letobserv/internal/domain/repository"
+	"github.com/ductran999/letobserv/internal/infrastructure/persistent"
+	"github.com/ductran999/letobserv/internal/transport/handler"
+	"github.com/ductran999/letobserv/pkg/dbconn"
 	"github.com/ductran999/letobserv/pkg/logger"
-	"github.com/ductran999/letobserv/services/common"
-	"github.com/ductran999/letobserv/services/products/handler"
-	"github.com/ductran999/letobserv/services/products/port"
-	"github.com/ductran999/letobserv/services/products/repo"
-	"github.com/ductran999/letobserv/services/products/usecase"
+
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -23,8 +25,8 @@ type ProductContainer struct {
 	Env *configs.ProductServiceEnv
 	DB  *gorm.DB
 
-	repo    port.ProductRepo
-	useCase port.ProductUseCase
+	repo    repository.ProductRepository
+	useCase usecase.ProductUseCase
 }
 
 func NewProductContainer(env *configs.ProductServiceEnv) (*ProductContainer, error) {
@@ -66,12 +68,12 @@ func (c *ProductContainer) ConnectDB() error {
 		SSLMode: "disable",
 	}
 
-	c.DB, err = common.ConnectDB(pgConf)
+	c.DB, err = dbconn.ConnectDB(pgConf)
 	return err
 }
 
 func (c *ProductContainer) InitRepo() {
-	c.repo = repo.NewProductRepo(c.DB)
+	c.repo = persistent.NewProductRepo(c.DB)
 }
 
 func (c *ProductContainer) InitUseCase() {
@@ -79,7 +81,7 @@ func (c *ProductContainer) InitUseCase() {
 }
 
 func (c *ProductContainer) StartHTTPServer() error {
-	if c.Env.ServiceEnv == common.ProdEnv {
+	if c.Env.ServiceEnv == consts.Production {
 		gin.SetMode(gin.ReleaseMode)
 	}
 

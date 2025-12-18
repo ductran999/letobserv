@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	config, err := configs.LoadProductConfig("product.env")
+	config, err := configs.LoadProductConfig()
 	if err != nil {
 		log.Fatalln("failed to load product config:", err)
 	}

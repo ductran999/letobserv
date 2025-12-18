@@ -7,25 +7,29 @@ import (
 	"net/http"
 
 	"github.com/ductran999/letobserv/configs"
+	"github.com/ductran999/letobserv/internal/application/usecase"
+	"github.com/ductran999/letobserv/internal/consts"
+	"github.com/ductran999/letobserv/internal/domain/repository"
+	"github.com/ductran999/letobserv/internal/infrastructure/persistent"
+	"github.com/ductran999/letobserv/internal/transport/handler"
+	"github.com/ductran999/letobserv/pkg/httpclient"
 	"github.com/ductran999/letobserv/pkg/logger"
-	"github.com/ductran999/letobserv/services/common"
-	"github.com/ductran999/letobserv/services/orders/handler"
-	"github.com/ductran999/letobserv/services/orders/port"
-	"github.com/ductran999/letobserv/services/orders/repo"
-	"github.com/ductran999/letobserv/services/orders/usecase"
+
 	"github.com/gin-gonic/gin"
 )
 
 type OrderContainer struct {
-	Env *configs.OrdersConfigEnv
+	Env        *configs.OrdersConfigEnv
+	httpClient httpclient.Client
 
-	repo    port.OrderRepo
-	useCase port.OrderUseCase
+	repo    repository.OrderRepository
+	useCase usecase.OrderUseCase
 }
 
 func NewOrderContainer(env *configs.OrdersConfigEnv) (*OrderContainer, error) {
 	container := &OrderContainer{
-		Env: env,
+		Env:        env,
+		httpClient: httpclient.New(),
 	}
 	// Initialize logger with the multi-writer
 	if err := logger.New(
@@ -45,15 +49,15 @@ func NewOrderContainer(env *configs.OrdersConfigEnv) (*OrderContainer, error) {
 }
 
 func (c *OrderContainer) InitRepo() {
-	c.repo = repo.NewOrderRepo()
+	c.repo = persistent.NewOrderRepo()
 }
 
 func (c *OrderContainer) InitUseCase() {
-	c.useCase = usecase.NewOrderUseCase(c.repo)
+	c.useCase = usecase.NewOrderUseCase(c.repo, c.httpClient)
 }
 
 func (c *OrderContainer) StartHTTPServer() error {
-	if c.Env.ServiceEnv == common.ProdEnv {
+	if c.Env.ServiceEnv == consts.Production {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
