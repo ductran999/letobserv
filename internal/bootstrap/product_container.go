@@ -1,4 +1,4 @@
-package di
+package bootstrap
 
 import (
 	"errors"
@@ -81,7 +81,7 @@ func (c *ProductContainer) InitUseCase() {
 }
 
 func (c *ProductContainer) StartHTTPServer() error {
-	if c.Env.ServiceEnv == consts.Production {
+	if c.Env.ServiceEnv == consts.ProductionEnv {
 		gin.SetMode(gin.ReleaseMode)
 	}
 

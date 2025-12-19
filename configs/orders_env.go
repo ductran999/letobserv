@@ -10,11 +10,11 @@ import (
 
 type OrdersConfigEnv struct {
 	ServiceEnv     string `mapstructure:"service_env" validate:"required,oneof=dev staging prod"`
-	ServiceName    string `mapstructure:"service_name" validate:"required"`
-	ServiceVersion string `mapstructure:"service_version" validate:"required"`
+	ServiceName    string `mapstructure:"order_service" validate:"required"`
+	ServiceVersion string `mapstructure:"order_service_version" validate:"required"`
 
-	ServiceHost string `mapstructure:"service_host" validate:"required"`
-	ServicePort string `mapstructure:"service_port" validate:"required,number"`
+	ServiceHost string `mapstructure:"order_service_http_host" validate:"required"`
+	ServicePort string `mapstructure:"order_service_http_port" validate:"required,number"`
 }
 
 func LoadOrderConfig() (*OrdersConfigEnv, error) {

@@ -17,6 +17,7 @@ type SuccessResp struct {
 func OK(c *gin.Context, data any, message ...string) {
 	msg := strings.Join(message, ", ")
 	resp := SuccessResp{
+		Success: true,
 		Data:    data,
 		Message: &msg,
 		TraceID: c.GetString("trace_id"),

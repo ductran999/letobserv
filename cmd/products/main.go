@@ -4,7 +4,7 @@ import (
 	"log"
 
 	"github.com/ductran999/letobserv/configs"
-	"github.com/ductran999/letobserv/di"
+	"github.com/ductran999/letobserv/internal/bootstrap"
 )
 
 func main() {
@@ -13,7 +13,7 @@ func main() {
 		log.Fatalln("failed to load product config:", err)
 	}
 
-	container, err := di.NewProductContainer(config)
+	container, err := bootstrap.NewProductContainer(config)
 	if err != nil {
 		log.Fatalln("failed to create new container:", err)
 	}

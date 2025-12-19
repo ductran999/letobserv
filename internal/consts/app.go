@@ -1,6 +1,10 @@
 package consts
 
-var Production = "prod"
+const (
+	ProductionEnv = "prod"
+	DeveloperEnv  = "dev"
+	StagingEnv    = "staging"
+)
 
 const (
 	HealthyState = "heathy"
