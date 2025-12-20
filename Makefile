@@ -46,3 +46,7 @@ setup: ## Setup demo dependencies
 		echo ".env already exists, skipping copy."; \
 	fi
 	docker-compose up -d
+
+.PHONY: order
+run-order: # Start order service
+	go run cmd/orders/main.go
