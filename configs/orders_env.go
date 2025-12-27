@@ -15,6 +15,13 @@ type OrdersConfigEnv struct {
 
 	ServiceHost string `mapstructure:"order_service_http_host" validate:"required"`
 	ServicePort string `mapstructure:"order_service_http_port" validate:"required,number"`
+
+	// Config DB
+	PgHost string `mapstructure:"db_host" validator:"required,min=1"`
+	PgPort int    `mapstructure:"db_port" validate:"required,number,gte=10000,lte=65535"`
+	PgUser string `mapstructure:"db_username" validator:"required,min=1"`
+	PgPass string `mapstructure:"db_password" validator:"required,min=1"`
+	PgDB   string `mapstructure:"db_order_database" validator:"required,min=1"`
 }
 
 func LoadOrderConfig() (*OrdersConfigEnv, error) {

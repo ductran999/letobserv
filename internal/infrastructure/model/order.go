@@ -8,7 +8,7 @@ type OrderDTO struct {
 	UserID      string `gorm:"column:user_id;type:uuid;index;not null"`
 
 	Status string  `gorm:"column:status;type:varchar(30);index;not null"`
-	Money  float64 `gorm:"column:money;not null"`
+	Money  float64 `gorm:"column:total_amount;not null"`
 
 	ShippingAddress      string `gorm:"column:shipping_address;type:text"`
 	ShippingPhone        string `gorm:"column:shipping_phone;type:varchar(20)"`
@@ -18,3 +18,5 @@ type OrderDTO struct {
 	CreatedAt time.Time `gorm:"column:created_at;autoCreateTime"`
 	UpdatedAt time.Time `gorm:"column:updated_at"`
 }
+
+func (o *OrderDTO) TableName() string { return "orders" }
