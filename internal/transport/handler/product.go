@@ -33,7 +33,7 @@ func (hdl *productHandler) ReduceProductStock(c *gin.Context) {
 	id := c.Param("id")
 
 	if err := hdl.productUC.ReduceProductStock(c.Request.Context(), id); err != nil {
-		c.Error(err)
+		_ = c.Error(err)
 	}
 
 	response.OK(c, nil, "Reduce product stock successfully!")

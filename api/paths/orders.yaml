@@ -1,0 +1,18 @@
+post:
+  tags:
+    - Orders
+  operationId: placeOrder
+  summary: Place an order
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../schemas/orders.yaml#/components/schemas/PlaceOrderRequest'
+  responses:
+    '200':
+      description: Successful response
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/orders.yaml#/components/schemas/PlacedOrderInfo'

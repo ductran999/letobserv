@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/ductran999/letobserv/pkg/xcontext"
 	"github.com/gin-gonic/gin"
 )
 
@@ -17,9 +18,21 @@ type SuccessResp struct {
 func OK(c *gin.Context, data any, message ...string) {
 	msg := strings.Join(message, ", ")
 	resp := SuccessResp{
+		Success: true,
 		Data:    data,
 		Message: &msg,
-		TraceID: c.GetString("trace_id"),
+		TraceID: c.GetString(xcontext.TraceIDKey),
 	}
 	c.JSON(http.StatusOK, resp)
+}
+
+func Created(c *gin.Context, data any, message ...string) {
+	msg := strings.Join(message, ", ")
+	resp := SuccessResp{
+		Success: true,
+		Data:    data,
+		Message: &msg,
+		TraceID: c.GetString(xcontext.TraceIDKey),
+	}
+	c.JSON(http.StatusCreated, resp)
 }

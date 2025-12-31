@@ -1,0 +1,8 @@
+get:
+  tags:
+    - System APIs
+  operationId: HealthCheck
+  summary: Health check
+  responses:
+    "200":
+      description: OK

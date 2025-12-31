@@ -21,7 +21,7 @@ import (
 
 var gLogger zerolog.Logger
 
-// configure common attributes for all logs
+// configure common attributes for all logs.
 func newResource() *resource.Resource {
 	hostName, _ := os.Hostname()
 	return resource.NewWithAttributes(
@@ -93,7 +93,7 @@ func New(serviceInfo ServiceInfo, options ...ConfigOption) error {
 	return nil
 }
 
-// GetLoggerWithTrace returns a logger derived from the global logger gLogger,
+// Logger returns a logger derived from the global logger gLogger,
 // with trace information attached from the context if available (useful for correlating logs with OpenTelemetry traces).
 //
 // Trace fields added to the log if present:
@@ -140,7 +140,7 @@ func setupWriter(conf *config) (io.Writer, error) {
 	// If file logging is enabled, add file writer
 	if conf.EnableFileLog && conf.FilePath != "" {
 		dir := filepath.Dir(conf.FilePath)
-		if err := os.MkdirAll(dir, 0o744); err != nil {
+		if err := os.MkdirAll(dir, 0o744); err != nil { //nolint:gosec
 			return nil, fmt.Errorf("failed to create log directory: %w", err)
 		}
 
@@ -149,7 +149,7 @@ func setupWriter(conf *config) (io.Writer, error) {
 			Filename:   conf.FilePath,
 			MaxSize:    conf.MaxAge, // megabytes
 			MaxBackups: conf.MaxBackups,
-			MaxAge:     conf.MaxAge, //days
+			MaxAge:     conf.MaxAge, // days
 			Compress:   conf.Compress,
 		}
 

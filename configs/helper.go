@@ -15,7 +15,7 @@ func autoBindEnv(v *viper.Viper, s any) {
 	for i := 0; i < t.NumField(); i++ {
 		tag := t.Field(i).Tag.Get("mapstructure")
 		if tag != "" {
-			v.BindEnv(tag)
+			_ = v.BindEnv(tag)
 		}
 	}
 }

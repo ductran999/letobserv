@@ -1,5 +1,6 @@
-PKG_SCRIPTS=scripts
-
+PKG_SCRIPTS=./scripts
+PKG_OPENAPI_PATH=./api
+PKG_GEN_PATH=./api/generated
 default: help
 
 help: ## Show help for each of the Makefile commands
@@ -46,3 +47,14 @@ setup: ## Setup demo dependencies
 		echo ".env already exists, skipping copy."; \
 	fi
 	docker-compose up -d
+
+.PHONY: order
+run-order: ## Start order service
+	go run cmd/orders/main.go
+
+.PHONY: api
+api: ## Auto generate api code specify in file api.spec.yml
+	rm -f ${PKG_GEN_PATH}/*
+	go get github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen
+	go generate ./...
+	go mod tidy

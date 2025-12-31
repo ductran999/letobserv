@@ -1,11 +1,12 @@
 package handler
 
 import (
-	"net/http"
 	"time"
 
+	"github.com/ductran999/letobserv/api/generated"
 	"github.com/ductran999/letobserv/internal/application/usecase"
 	"github.com/ductran999/letobserv/internal/consts"
+	"github.com/ductran999/letobserv/internal/transport/mapper"
 	"github.com/ductran999/letobserv/pkg/response"
 	"github.com/gin-gonic/gin"
 )
@@ -15,14 +16,14 @@ type orderHandler struct {
 	startUpAt    time.Time
 }
 
-func NewOrderHandler(orderUsecase usecase.OrderUseCase) *orderHandler {
+func NewOrderHandler(orderUsecase usecase.OrderUseCase) OrderHandler {
 	return &orderHandler{
 		orderUsecase: orderUsecase,
 		startUpAt:    time.Now(),
 	}
 }
 
-func (hdl *orderHandler) CheckHealth(c *gin.Context) {
+func (hdl *orderHandler) HealthCheck(c *gin.Context) {
 	uptime := int64(time.Since(hdl.startUpAt).Seconds())
 	resp := gin.H{
 		"status": consts.HealthyState,
@@ -32,17 +33,18 @@ func (hdl *orderHandler) CheckHealth(c *gin.Context) {
 }
 
 func (hdl *orderHandler) PlaceOrder(c *gin.Context) {
-	err := hdl.orderUsecase.PlacePOrder(c.Request.Context())
+	body, err := ParseBody[generated.PlaceOrderJSONRequestBody](c)
 	if err != nil {
-		c.JSON(http.StatusConflict, gin.H{
-			"status":  http.StatusConflict,
-			"message": "Placed ordered failed.",
-		})
+		response.BadRequest(c, consts.BadRequest, err)
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{
-		"status":  http.StatusCreated,
-		"message": "Place an order successfully.",
-	})
+	input := mapper.FromPlaceOrderOpenAPIRequest(body)
+	placedOrder, err := hdl.orderUsecase.PlacePOrder(c.Request.Context(), *input)
+	if err != nil {
+		response.InternalServerError(c, consts.InternalServerError, err)
+		return
+	}
+
+	response.Created(c, mapper.ToPlacedOrderInfoOpenAPI(placedOrder), "Order placed successfully!")
 }

@@ -40,7 +40,7 @@ func getDefaultConfig(serviceInfo ServiceInfo) *config {
 		EnableFileLog: false,
 		FilePath:      defaultPath,
 		MaxSize:       100, // MB
-		MaxAge:        28,  //days
+		MaxAge:        28,  // days
 		MaxBackups:    3,
 		Compress:      false,
 	}
@@ -90,7 +90,7 @@ func WithLogFile(filePath string) ConfigOption {
 		// Convert to absolute path to prevent relative path traversal (e.g., ../../)
 		absPath, err := filepath.Abs(fp)
 		if err != nil {
-			return fmt.Errorf("%w: %v", ErrInvalidFilePath, err)
+			return fmt.Errorf("%w: %s", ErrInvalidFilePath, err.Error())
 		}
 
 		// Determine the allowed root folder for logs
