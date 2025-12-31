@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// LoggingMiddleware returns a gin middleware that logs requests with trace information
+// LoggingMiddleware returns a gin middleware that logs requests with trace information.
 func LoggingMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Start timer

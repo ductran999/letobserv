@@ -10,7 +10,7 @@ type OrderHandler interface {
 	PlaceOrder(c *gin.Context)
 }
 
-// ParseBody[T] parses JSON body into struct T, sends 400 & abort Gin context on error
+// ParseBody[T] parses JSON body into struct T, sends 400 & abort Gin context on error.
 func ParseBody[T any](c *gin.Context) (*T, error) {
 	var body T
 	if err := c.ShouldBindJSON(&body); err != nil {

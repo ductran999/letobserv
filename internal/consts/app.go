@@ -7,10 +7,12 @@ const (
 )
 
 const (
-	// 5xx - Server errors
+	// 5xx - Server errors.
+
 	InternalServerError = "INTERNAL_SERVER_ERROR"
 
-	// 4xx - Client errors
+	// 4xx - Client errors.
+
 	BadRequest       = "BAD_REQUEST"
 	Unauthorized     = "UNAUTHORIZED"
 	Forbidden        = "FORBIDDEN"
