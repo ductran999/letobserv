@@ -51,6 +51,10 @@ cleanup: ## Cleanup demo
 run-order: ## Start order service
 	go run cmd/orders/main.go
 
+.PHONY: feed
+feed: ## Feed data
+	@bash -c 'set -a && source ./.env && set +a && ./scripts/feed_data.sh'
+
 .PHONY: api
 api: ## Auto generate api code specify in file api.spec.yml
 	rm -f ./api/generated/orders/*
