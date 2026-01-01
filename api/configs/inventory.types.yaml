@@ -1,5 +1,5 @@
 package: generated
-output: ../generated/types.gen.go
+output: ../generated/inventory/types.gen.go
 generate:
   models: true
 output-options:

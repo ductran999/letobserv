@@ -13,7 +13,7 @@ func main() {
 		log.Fatalln("failed to load product config:", err)
 	}
 
-	container, err := bootstrap.NewProductContainer(config)
+	container, err := bootstrap.NewInventory(config)
 	if err != nil {
 		log.Fatalln("failed to create new container:", err)
 	}

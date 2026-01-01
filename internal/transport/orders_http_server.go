@@ -6,7 +6,7 @@ import (
 	"net"
 	"net/http"
 
-	"github.com/ductran999/letobserv/api/generated"
+	generated "github.com/ductran999/letobserv/api/generated/orders"
 	"github.com/ductran999/letobserv/internal/bootstrap"
 	"github.com/ductran999/letobserv/internal/consts"
 	"github.com/ductran999/letobserv/internal/transport/handler"

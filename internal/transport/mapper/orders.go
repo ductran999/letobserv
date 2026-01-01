@@ -1,7 +1,7 @@
 package mapper
 
 import (
-	"github.com/ductran999/letobserv/api/generated"
+	generated "github.com/ductran999/letobserv/api/generated/orders"
 	"github.com/ductran999/letobserv/internal/application/inputs"
 	"github.com/ductran999/letobserv/internal/application/outputs"
 )

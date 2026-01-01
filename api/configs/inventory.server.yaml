@@ -1,5 +1,5 @@
 package: generated
-output: ../generated/server.gen.go
+output: ../generated/inventory/server.gen.go
 generate:
   models: true
   gin-server: true
@@ -8,4 +8,4 @@ output-options:
   # to make sure that all types are generated
   skip-prune: true
 import-mapping:
-  ../schemas/orders.yaml: "-"
+  ../schemas/products.yaml: "-"

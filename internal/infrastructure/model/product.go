@@ -1,17 +1,18 @@
 package model
 
-import "time"
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
 
 type Product struct {
-	ID        int       `json:"id" gorm:"primaryKey;autoIncrement;column:id"`
-	Name      string    `json:"name" gorm:"type:varchar(255);not null;column:name"`
-	SKU       string    `json:"sku" gorm:"type:varchar(100);uniqueIndex;not null;column:sku"`
-	Price     float64   `json:"price" gorm:"type:numeric(10,2);not null;column:price"`
-	Stock     int       `json:"stock" gorm:"not null;default:0;column:stock"`
-	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime;column:created_at"`
-	UpdatedAt time.Time `json:"updated_at" gorm:"autoUpdateTime"`
+	ID          uuid.UUID  `json:"id" gorm:"primaryKey;autoIncrement;column:id"`
+	Name        string     `json:"name" gorm:"type:varchar(255);not null;column:name"`
+	Description *string    `json:"description" gorm:"type:description;column:description"`
+	Price       float64    `json:"price" gorm:"type:numeric(10,2);not null;column:price"`
+	CreatedAt   *time.Time `json:"created_at" gorm:"autoCreateTime;column:created_at"`
+	UpdatedAt   *time.Time `json:"updated_at" gorm:"autoUpdateTime"`
 }
 
-func (Product) TableName() string {
-	return "products"
-}
+func (Product) TableName() string { return "products" }

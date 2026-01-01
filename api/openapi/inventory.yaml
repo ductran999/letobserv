@@ -1,0 +1,15 @@
+openapi: 3.0.3
+info:
+  title: Inventory Service APIs
+  description: The api contract for inventory service.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080
+
+paths:
+  /health:
+    $ref: '../paths/internal.yaml'
+
+  /products:
+    $ref: '../paths/products.yaml'

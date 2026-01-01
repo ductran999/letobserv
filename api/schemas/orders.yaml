@@ -79,4 +79,3 @@ components:
         order_number:
           type: string
           example: "ORD-2025-660e8400"
-

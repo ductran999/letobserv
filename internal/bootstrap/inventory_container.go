@@ -21,16 +21,16 @@ import (
 	"gorm.io/gorm"
 )
 
-type ProductContainer struct {
-	Env *configs.ProductServiceEnv
+type Inventory struct {
+	Env *configs.InventoryEnv
 	DB  *gorm.DB
 
 	repo    repository.ProductRepository
-	useCase usecase.ProductUseCase
+	useCase usecase.InventoryUsecase
 }
 
-func NewProductContainer(env *configs.ProductServiceEnv) (*ProductContainer, error) {
-	container := &ProductContainer{
+func NewInventory(env *configs.InventoryEnv) (*Inventory, error) {
+	container := &Inventory{
 		Env: env,
 	}
 
@@ -53,7 +53,7 @@ func NewProductContainer(env *configs.ProductServiceEnv) (*ProductContainer, err
 	return container, nil
 }
 
-func (c *ProductContainer) ConnectDB() error {
+func (c *Inventory) ConnectDB() error {
 	var err error
 
 	pgConf := dbkit.PostgreSQLConfig{
@@ -72,15 +72,15 @@ func (c *ProductContainer) ConnectDB() error {
 	return err
 }
 
-func (c *ProductContainer) InitRepo() {
+func (c *Inventory) InitRepo() {
 	c.repo = persistent.NewProductRepo(c.DB)
 }
 
-func (c *ProductContainer) InitUseCase() {
-	c.useCase = usecase.NewProductUseCase(c.repo)
+func (c *Inventory) InitUseCase() {
+	c.useCase = usecase.NewInventoryUsecase(c.repo)
 }
 
-func (c *ProductContainer) StartHTTPServer() error {
+func (c *Inventory) StartHTTPServer() error {
 	if c.Env.ServiceEnv == consts.ProductionEnv {
 		gin.SetMode(gin.ReleaseMode)
 	}
@@ -89,8 +89,8 @@ func (c *ProductContainer) StartHTTPServer() error {
 
 	// Simple reduce stock API
 	r := gin.Default()
-	r.PATCH("/api/products/:id/reduce-stock", hdl.ReduceProductStock)
-	r.GET("/health", hdl.CheckHealth)
+	r.GET("/healthz", hdl.CheckHealth)
+	r.GET("/products", hdl.ListProducts)
 
 	// Start http server
 	address := net.JoinHostPort("0.0.0.0", c.Env.ServicePort)
@@ -98,5 +98,6 @@ func (c *ProductContainer) StartHTTPServer() error {
 	if err := r.Run(address); err != nil && errors.Is(err, http.ErrServerClosed) {
 		return err
 	}
+
 	return nil
 }
