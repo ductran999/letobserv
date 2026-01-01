@@ -1,6 +1,5 @@
 PKG_SCRIPTS=./scripts
 PKG_OPENAPI_PATH=./api
-PKG_GEN_PATH=./api/generated
 default: help
 
 help: ## Show help for each of the Makefile commands
@@ -23,10 +22,6 @@ lint: ## Run linters
 deps: ## install library
 	go install github.com/vektra/mockery/v3@v3.4.0
 
-.PHONY: stop
-stop: ## Stop demo 
-	docker-compose down
-
 .PHONY: restart 
 restart: ## Reset demo
 	docker-compose down
@@ -48,13 +43,18 @@ setup: ## Setup demo dependencies
 	fi
 	docker-compose up -d
 
+.PHONY: cleanup
+cleanup: ## Cleanup demo
+	@docker compose down
+
 .PHONY: order
 run-order: ## Start order service
 	go run cmd/orders/main.go
 
 .PHONY: api
 api: ## Auto generate api code specify in file api.spec.yml
-	rm -f ${PKG_GEN_PATH}/*
+	rm -f ./api/generated/orders/*
+	rm -f ./api/generated/inventory/*
 	go get github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen
 	go generate ./...
 	go mod tidy
