@@ -5,6 +5,7 @@ import (
 
 	"github.com/ductran999/letobserv/configs"
 	"github.com/ductran999/letobserv/internal/bootstrap"
+	"github.com/ductran999/letobserv/internal/transport"
 )
 
 func main() {
@@ -18,7 +19,7 @@ func main() {
 		log.Fatalln("failed to create new container:", err)
 	}
 
-	if err := container.StartHTTPServer(); err != nil {
+	if err := transport.StartInventoryHTTPServer(container); err != nil {
 		log.Fatalln("start http server failed:", err)
 	}
 }

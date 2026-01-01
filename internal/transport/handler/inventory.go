@@ -14,14 +14,14 @@ type inventoryHandler struct {
 	startUpAt time.Time
 }
 
-func NewProductHandler(productUC usecase.InventoryUsecase) *inventoryHandler {
+func NewInventoryHandler(productUC usecase.InventoryUsecase) *inventoryHandler {
 	return &inventoryHandler{
 		productUC: productUC,
 		startUpAt: time.Now(),
 	}
 }
 
-func (hdl *inventoryHandler) CheckHealth(c *gin.Context) {
+func (hdl *inventoryHandler) HealthCheck(c *gin.Context) {
 	uptime := int64(time.Since(hdl.startUpAt).Seconds())
 	resp := gin.H{
 		"status": "Healthy",
