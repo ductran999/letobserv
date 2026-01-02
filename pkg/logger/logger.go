@@ -40,7 +40,7 @@ func newResource() *resource.Resource {
 //
 //	{
 //	  "level":"info",
-//	  "service_name":"orders-service",
+//	  "service_name":"order-service",
 //	  "service_version":"v1.0.0",
 //	  "service_env":"dev",
 //	  "time":"2025-11-09T17:04:40+07:00",
