@@ -1,4 +1,4 @@
-0get:
+get:
   tags:
     - Inventory 
   operationId: listProducts
@@ -11,4 +11,4 @@
           schema:
             type: array
             items:
-              $ref: '../schemas/products.yaml#/components/schemas/ProductInfo'
+              $ref: '../schemas/inventory.yaml#/components/schemas/ProductInfo'

@@ -8,4 +8,4 @@ output-options:
   # to make sure that all types are generated
   skip-prune: true
 import-mapping:
-  ../schemas/products.yaml: "-"
+  ../schemas/inventory.yaml: "-"
