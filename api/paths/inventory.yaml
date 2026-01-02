@@ -1,0 +1,22 @@
+post:
+  tags:
+    - Inventory
+  operationId: InventoryReserve
+  summary: Reserve stock for an order before payment
+  description: |
+    Reserve the requested quantity of products for a specific order.
+    If stock is insufficient, the request will fail. Reservation expires automatically
+    after a TTL unless confirmed.
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../schemas/inventory.yaml#/components/schemas/InventoryReserveRequest'
+  responses:
+    '200':
+      description: Stock successfully reserved
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/inventory.yaml#/components/schemas/ReservationResponse'

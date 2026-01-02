@@ -1,0 +1,90 @@
+components:
+  schemas:
+    InventoryReserveRequest:
+      type: object
+      required:
+        - order_id
+        - items
+        - ttl_seconds
+      properties:
+        order_id:
+          type: string
+          format: uuid
+          description: The unique ID of the order
+        items:
+          type: array
+          description: List of products to reserve
+          items:
+            $ref: '#/components/schemas/ReservationItem'
+        ttl_seconds:
+          type: integer
+          description: Reservation time-to-live in seconds
+          minimum: 1
+
+    ReservationResponse:
+      type: object
+      required:
+        - reservation_id
+        - order_id
+        - items
+        - expired_at
+      properties:
+        reservation_id:
+          type: string
+          description: Unique reservation ID
+        order_id:
+          type: string
+          description: Related order ID
+        items:
+          type: array
+          description: Reserved items
+          items:
+            $ref: '#/components/schemas/ReservationItem'
+        expired_at:
+          type: string
+          format: date-time
+          description: Reservation expiration time (UTC)
+      examples:
+        successExample:
+          summary: Reservation success
+          value:
+            reservation_id: "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+            order_id: "550e8400-e29b-41d4-a716-446655440000"
+            items:
+              - product_id: "c0a80123-0000-0000-0000-000000000001"
+                quantity: 2
+            expired_at: "2026-01-01T10:30:00Z"
+
+    ReservationItem:
+      type: object
+      required:
+        - product_id
+        - quantity
+      properties:
+        product_id:
+          type: string
+          format: uuid
+          description: The ID of the product to reserve
+        quantity:
+          type: integer
+          minimum: 1
+          description: Quantity of the product to reserve
+
+    ProductInfo:
+      type: object
+      required:
+      - id
+      - name
+      - price
+      - created_at
+      - updated_at
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        price:
+          type: number
+          format: double
+        description:
+          type: string

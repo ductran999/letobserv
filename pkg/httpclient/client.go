@@ -124,10 +124,6 @@ func (h *httpClient) doRequest(
 		req.Header.Set(k, v)
 	}
 
-	q := req.URL.Query() // lấy query hiện tại (nếu có)
-	q.Set("temp", "1")
-	req.URL.RawQuery = q.Encode()
-
 	// Perform the request
 	resp, err := h.client.Do(req)
 	if err != nil {

@@ -55,7 +55,7 @@ services:
     restart: "no"
     volumes:
       - ./scripts/migrate_inventory_db.sh:/wait-and-migrate.sh
-      - ./migrations/inventory:/migrations
+      - ./migrations/inventory/schemas:/migrations
     networks:
       - localnet
   
@@ -71,7 +71,7 @@ services:
     restart: "no"
     volumes:
       - ./scripts/migrate_orders_db.sh:/wait-and-migrate.sh
-      - ./migrations/orders:/migrations
+      - ./migrations/orders/schemas:/migrations
     networks:
       - localnet
 
