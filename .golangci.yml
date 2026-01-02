@@ -13,6 +13,20 @@ run:
 
 linters:
   default: all
+  settings:
+    errcheck:
+      verbose: true
+      exclude-functions:
+        - (*os.File).Close
+        - (*net/http.Response).Body.Close
+        - (*net/http.Request).Body.Close
+        - (*io.PipeReader).Close
+        - (*io.PipeWriter).Close
+        - (io.Closer).Close
+        - io/ioutil.ReadFile
+        - io.Copy(*bytes.Buffer)
+        - io.Copy(os.Stdout)
+        - (*).Body.Close
   disable:
     - noinlineerr
     - wsl_v5
