@@ -19,4 +19,4 @@ type OrderDTO struct {
 	UpdatedAt time.Time `gorm:"column:updated_at"`
 }
 
-func (o *OrderDTO) TableName() string { return "order" }
+func (o *OrderDTO) TableName() string { return "orders" }

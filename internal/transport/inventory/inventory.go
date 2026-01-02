@@ -4,7 +4,7 @@ import (
 	"time"
 
 	generated "github.com/ductran999/letobserv/api/generated/inventory"
-	"github.com/ductran999/letobserv/internal/application/inventory"
+	"github.com/ductran999/letobserv/internal/application/usecase/inventory"
 	"github.com/ductran999/letobserv/pkg/request"
 	"github.com/ductran999/letobserv/pkg/response"
 	"github.com/gin-gonic/gin"

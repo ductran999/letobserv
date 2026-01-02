@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/go-playground/validator/v10"
+	"github.com/ductran999/letobserv/pkg/request"
 	"github.com/spf13/viper"
 )
 
@@ -22,6 +22,9 @@ type OrdersConfigEnv struct {
 	PgUser string `mapstructure:"db_username" validator:"required,min=1"`
 	PgPass string `mapstructure:"db_password" validator:"required,min=1"`
 	PgDB   string `mapstructure:"db_order_database" validator:"required,min=1"`
+
+	// Integrate service
+	InventoryServiceBaseURL string `mapstructure:"inventory_service_base_url" validator:"url"`
 }
 
 func LoadOrderConfig() (*OrdersConfigEnv, error) {
@@ -32,6 +35,7 @@ func LoadOrderConfig() (*OrdersConfigEnv, error) {
 
 	// Auto binding env var into viper
 	viper.AutomaticEnv()
+
 	autoBindEnv(viper.GetViper(), OrdersConfigEnv{})
 
 	var conf OrdersConfigEnv
@@ -40,8 +44,7 @@ func LoadOrderConfig() (*OrdersConfigEnv, error) {
 	}
 
 	// Validate
-	validate := validator.New()
-	if err := validate.Struct(&conf); err != nil {
+	if err := request.GValidator.Struct(&conf); err != nil {
 		return nil, fmt.Errorf("invalid config: %w", err)
 	}
 

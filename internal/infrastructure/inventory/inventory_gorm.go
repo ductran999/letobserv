@@ -37,11 +37,7 @@ func (r *inventoryPersistent) GetStock(ctx context.Context, productID string) (*
 	return &stock, nil
 }
 
-func (r *inventoryPersistent) IncreaseReserved(
-	ctx context.Context,
-	productID string,
-	quantity int,
-) error {
+func (r *inventoryPersistent) IncreaseReserved(ctx context.Context, productID string, quantity int) error {
 	txDB, err := txmanager.GetTx(ctx)
 	if err != nil {
 		return err

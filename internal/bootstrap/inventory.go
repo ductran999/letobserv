@@ -5,7 +5,7 @@ import (
 
 	"github.com/ductran999/dbkit"
 	"github.com/ductran999/letobserv/configs"
-	"github.com/ductran999/letobserv/internal/application/inventory"
+	"github.com/ductran999/letobserv/internal/application/usecase/inventory"
 	infraInventory "github.com/ductran999/letobserv/internal/infrastructure/inventory"
 	infraProduct "github.com/ductran999/letobserv/internal/infrastructure/product"
 	"github.com/ductran999/letobserv/pkg/dbconn"

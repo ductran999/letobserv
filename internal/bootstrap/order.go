@@ -5,9 +5,10 @@ import (
 
 	"github.com/ductran999/dbkit"
 	"github.com/ductran999/letobserv/configs"
-	"github.com/ductran999/letobserv/internal/application/order"
+	"github.com/ductran999/letobserv/internal/application/usecase/order"
 	domainOrder "github.com/ductran999/letobserv/internal/domain/order"
 	infraOrder "github.com/ductran999/letobserv/internal/infrastructure/order"
+	infraService "github.com/ductran999/letobserv/internal/infrastructure/service"
 	"github.com/ductran999/letobserv/pkg/dbconn"
 	"github.com/ductran999/letobserv/pkg/httpclient"
 	"gorm.io/gorm"
@@ -29,7 +30,8 @@ func NewOrderBootstrap(env *configs.OrdersConfigEnv) (*OrderBootstrap, error) {
 
 	client := httpclient.New()
 	orderRepo := infraOrder.NewOrderRepo(pg)
-	orderUC := order.NewOrderUseCase(orderRepo, client)
+	inventorySvc := infraService.NewInventoryService(client, env.InventoryServiceBaseURL)
+	orderUC := order.NewOrderUseCase(orderRepo, inventorySvc)
 
 	app := &OrderBootstrap{
 		env:        env,

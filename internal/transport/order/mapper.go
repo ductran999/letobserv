@@ -2,7 +2,7 @@ package handler
 
 import (
 	generated "github.com/ductran999/letobserv/api/generated/orders"
-	"github.com/ductran999/letobserv/internal/application/order"
+	"github.com/ductran999/letobserv/internal/application/usecase/order"
 )
 
 // --------- Map OpenAPI struct to Handler --------------
@@ -11,9 +11,7 @@ func FromPlaceOrderOpenAPIRequest(body *generated.PlaceOrderJSONRequestBody) *or
 	items := make([]order.OrderItem, 0, len(body.Items))
 	for _, item := range body.Items {
 		items = append(items, order.OrderItem{
-			ID:          item.Id,
-			OrderID:     item.OrderId,
-			ProductID:   item.Id,
+			ProductID:   item.ProductId,
 			ProductName: item.ProductName,
 			Quantity:    int(item.Quantity),
 			UnitPrice:   item.UnitPrice,

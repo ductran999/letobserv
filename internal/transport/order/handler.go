@@ -4,7 +4,7 @@ import (
 	"time"
 
 	generated "github.com/ductran999/letobserv/api/generated/orders"
-	"github.com/ductran999/letobserv/internal/application/order"
+	"github.com/ductran999/letobserv/internal/application/usecase/order"
 	"github.com/ductran999/letobserv/internal/consts"
 	"github.com/ductran999/letobserv/pkg/request"
 	"github.com/ductran999/letobserv/pkg/response"
