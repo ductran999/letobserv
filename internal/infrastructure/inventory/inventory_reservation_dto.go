@@ -14,7 +14,7 @@ type InventoryReservationDTO struct {
 
 	Quantity int `gorm:"column:quantity;not null;check:quantity > 0"`
 
-	Status inventory.ReservationStatus `gorm:"column:status;type:text;not null;check:status IN ('RESERVED','CONFIRMED','RELEASED')"`
+	Status inventory.ReservationStatus `gorm:"column:status;type:text"`
 
 	CreatedAt time.Time `gorm:"column:created_at;not null;autoCreateTime"`
 	UpdatedAt time.Time `gorm:"column:updated_at;not null;autoUpdateTime"`
