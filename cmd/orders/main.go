@@ -20,6 +20,9 @@ func main() {
 	}
 
 	if err := server.RunHTTP(app, env); err != nil {
+		if env.ApmEnable {
+			app.APMAgent.Shutdown()
+		}
 		log.Fatalln("http server error:", err)
 	}
 }

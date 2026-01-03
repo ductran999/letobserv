@@ -50,18 +50,9 @@ func New() Client {
 		ExpectContinueTimeout: 1 * time.Second,
 	}
 
-	clientTransport := otelhttp.NewTransport(
-		transport,
-		otelhttp.WithSpanNameFormatter(func(operation string, req *http.Request) string {
-			fmt.Println(operation)
-			urlPath := req.URL.Host
-			return fmt.Sprintf("%s %s", req.Method, urlPath)
-		}),
-	)
-
 	return &httpClient{
 		client: &http.Client{
-			Transport: clientTransport,
+			Transport: otelhttp.NewTransport(transport),
 		},
 	}
 }

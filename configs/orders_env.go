@@ -25,6 +25,12 @@ type OrdersConfigEnv struct {
 
 	// Integrate service
 	InventoryServiceBaseURL string `mapstructure:"inventory_service_base_url" validator:"url"`
+
+	// APM agent config
+	ApmEnable           bool   `mapstructure:"apm_enable"`
+	ApmApiKey           string `mapstructure:"apm_api_key" validator:"required_if=ApmEnable true"`
+	ApmExporterEndpoint string `mapstructure:"apm_exporter_endpoint" validator:"required_if=ApmEnable true"`
+	ApmInsecureMode     bool   `mapstructure:"apm_insecure_mode"`
 }
 
 func LoadOrderConfig() (*OrdersConfigEnv, error) {

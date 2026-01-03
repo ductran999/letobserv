@@ -17,11 +17,17 @@ type InventoryEnv struct {
 	ServicePort string `mapstructure:"inventory_service_http_port" validate:"required,number"`
 
 	// Config DB
-	PgHost string `mapstructure:"db_host" validator:"required,min=1"`
+	PgHost string `mapstructure:"db_host" validate:"required,min=1"`
 	PgPort int    `mapstructure:"db_port" validate:"required,number,gte=10000,lte=65535"`
-	PgUser string `mapstructure:"db_username" validator:"required,min=1"`
-	PgPass string `mapstructure:"db_password" validator:"required,min=1"`
-	PgDB   string `mapstructure:"db_inventory_database" validator:"required,min=1"`
+	PgUser string `mapstructure:"db_username" validate:"required,min=1"`
+	PgPass string `mapstructure:"db_password" validate:"required,min=1"`
+	PgDB   string `mapstructure:"db_inventory_database" validate:"required,min=1"`
+
+	// APM agent config
+	ApmEnable           bool   `mapstructure:"apm_enable"`
+	ApmApiKey           string `mapstructure:"apm_api_key" validate:"required_if=ApmEnable true"`
+	ApmExporterEndpoint string `mapstructure:"apm_exporter_endpoint" validate:"required_if=ApmEnable true"`
+	ApmInsecureMode     bool   `mapstructure:"apm_insecure_mode"`
 }
 
 func LoadProductConfig() (*InventoryEnv, error) {

@@ -30,6 +30,11 @@ type config struct {
 	MaxAge     int  // Max age (days) to retain old files
 	MaxBackups int  // Max number of backup files to keep
 	Compress   bool // Compress rotated files (gzip)
+
+	// Config APM
+	EnableAPM           bool
+	ApmExporterEndpoint string
+	ApmApiKey           string
 }
 
 type ConfigOption func(conf *config) error
@@ -136,6 +141,22 @@ func WithLogRotation(maxSize, maxAge, maxBackups int, compress bool) ConfigOptio
 		conf.MaxAge = maxAge
 		conf.MaxBackups = maxBackups
 		conf.Compress = compress
+
+		return nil
+	}
+}
+
+func WithAPM(apmConf APMConfig) ConfigOption {
+	return func(conf *config) error {
+		conf.EnableAPM = apmConf.Enable
+
+		if conf.EnableAPM {
+			if err := apmConf.Validate(); err != nil {
+				return err
+			}
+			conf.ApmApiKey = apmConf.ApiKey
+			conf.ApmExporterEndpoint = apmConf.ExporterEndpoint
+		}
 
 		return nil
 	}

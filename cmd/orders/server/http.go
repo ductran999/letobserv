@@ -2,7 +2,6 @@ package server
 
 import (
 	"errors"
-	"log"
 	"net"
 	"net/http"
 
@@ -10,8 +9,10 @@ import (
 	"github.com/ductran999/letobserv/configs"
 	"github.com/ductran999/letobserv/internal/bootstrap"
 	"github.com/ductran999/letobserv/internal/consts"
+	"github.com/ductran999/letobserv/internal/transport/middleware"
 	handler "github.com/ductran999/letobserv/internal/transport/order"
 	"github.com/gin-gonic/gin"
+	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
 )
 
 func RunHTTP(app *bootstrap.OrderBootstrap, env *configs.OrdersConfigEnv) error {
@@ -19,16 +20,17 @@ func RunHTTP(app *bootstrap.OrderBootstrap, env *configs.OrdersConfigEnv) error 
 		gin.SetMode(gin.ReleaseMode)
 	}
 
-	r := gin.Default()
+	router := gin.Default()
+	if env.ApmEnable {
+		router.Use(otelgin.Middleware(env.ServiceName))
+	}
+	router.Use(middleware.LoggingMiddleware())
 
 	handler := handler.NewOrderHandler(app.OrderUC)
-	generated.RegisterHandlers(r, handler)
+	generated.RegisterHandlers(router, handler)
 
 	address := net.JoinHostPort("0.0.0.0", env.ServicePort)
-
-	log.Println("[INFO] order service serving on", address)
-
-	if err := r.Run(address); err != nil && !errors.Is(err, http.ErrServerClosed) {
+	if err := router.Run(address); err != nil && !errors.Is(err, http.ErrServerClosed) {
 		return err
 	}
 
