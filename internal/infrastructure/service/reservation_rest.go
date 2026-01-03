@@ -30,7 +30,7 @@ func (svc *inventoryService) Reserve(ctx context.Context, req service.InventoryR
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close() //nolint
+	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
 		return order.ErrReserveInventory

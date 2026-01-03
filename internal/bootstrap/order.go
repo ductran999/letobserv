@@ -2,20 +2,25 @@ package bootstrap
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/ductran999/dbkit"
 	"github.com/ductran999/letobserv/configs"
 	"github.com/ductran999/letobserv/internal/application/usecase/order"
+	"github.com/ductran999/letobserv/internal/consts"
 	domainOrder "github.com/ductran999/letobserv/internal/domain/order"
 	infraOrder "github.com/ductran999/letobserv/internal/infrastructure/order"
 	infraService "github.com/ductran999/letobserv/internal/infrastructure/service"
+	"github.com/ductran999/letobserv/pkg/apm"
 	"github.com/ductran999/letobserv/pkg/dbconn"
 	"github.com/ductran999/letobserv/pkg/httpclient"
+	"github.com/ductran999/letobserv/pkg/logger"
 	"gorm.io/gorm"
 )
 
 type OrderBootstrap struct {
-	OrderUC order.OrderUseCase
+	OrderUC  order.OrderUseCase
+	APMAgent apm.APMAgent
 
 	env        *configs.OrdersConfigEnv
 	httpClient httpclient.Client
@@ -27,6 +32,21 @@ func NewOrderBootstrap(env *configs.OrdersConfigEnv) (*OrderBootstrap, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect order db: %w", err)
 	}
+	log.Println("[INFO] connect pg db successfully!")
+
+	var apmAgent apm.APMAgent
+	if env.ApmEnable {
+		apmAgent, err = newOrderServiceAPMAgent(env)
+		if err != nil {
+			return nil, fmt.Errorf("failed to start apm agent: %w", err)
+		}
+		log.Println("[INFO] start apm agent successfully!")
+	}
+
+	if err = newOrdersLogger(env); err != nil {
+		return nil, fmt.Errorf("init logger: %w", err)
+	}
+	log.Println("[INFO] initialize logger successfully!")
 
 	client := httpclient.New()
 	orderRepo := infraOrder.NewOrderRepo(pg)
@@ -38,6 +58,7 @@ func NewOrderBootstrap(env *configs.OrdersConfigEnv) (*OrderBootstrap, error) {
 		httpClient: client,
 		OrderUC:    orderUC,
 		orderRepo:  orderRepo,
+		APMAgent:   apmAgent,
 	}
 
 	return app, nil
@@ -57,4 +78,47 @@ func connectOrderDB(env *configs.OrdersConfigEnv) (*gorm.DB, error) {
 	}
 
 	return dbconn.ConnectDB(pgConf)
+}
+
+func newOrderServiceAPMAgent(env *configs.OrdersConfigEnv) (apm.APMAgent, error) {
+	logLevel := consts.LogInfoLevel
+	if env.ServiceEnv == consts.DeveloperEnv {
+		logLevel = consts.LogDebugLevel
+	}
+
+	config := apm.AgentConfig{
+		ServiceName:      env.ServiceName,
+		ServiceVersion:   env.ServiceVersion,
+		ServiceEnv:       env.ServiceEnv,
+		LogLevel:         logLevel,
+		ApiKey:           env.ApmApiKey,
+		InsecureMode:     env.ApmInsecureMode,
+		ExporterEndpoint: env.ApmExporterEndpoint,
+	}
+	agent, err := apm.NewClickStackAPM(config)
+	if err != nil {
+		return nil, err
+	}
+
+	return agent, nil
+}
+
+func newOrdersLogger(env *configs.OrdersConfigEnv) error {
+	serviceInfo := logger.ServiceInfo{
+		Name:    env.ServiceName,
+		Version: env.ServiceVersion,
+		Env:     env.ServiceEnv,
+	}
+
+	if !env.ApmEnable {
+		return logger.New(serviceInfo)
+	}
+
+	apmConfig := logger.APMConfig{
+		Enable:           env.ApmEnable,
+		ExporterEndpoint: env.ApmExporterEndpoint,
+		ApiKey:           env.ApmApiKey,
+	}
+
+	return logger.New(serviceInfo, logger.WithAPM(apmConfig))
 }

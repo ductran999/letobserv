@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"path/filepath"
 	"time"
@@ -20,17 +21,6 @@ import (
 )
 
 var gLogger zerolog.Logger
-
-// configure common attributes for all logs.
-func newResource() *resource.Resource {
-	hostName, _ := os.Hostname()
-	return resource.NewWithAttributes(
-		semconv.SchemaURL,
-		semconv.ServiceName("otelzerolog-example"),
-		semconv.ServiceVersion("1.0.0"),
-		semconv.HostName(hostName),
-	)
-}
 
 // New initializes and configures the global logger instance.
 // By default, logging to file is disabled.
@@ -70,25 +60,22 @@ func New(serviceInfo ServiceInfo, options ...ConfigOption) error {
 		return err
 	}
 
-	// configure opentelemetry logger provider
-	exporter, _ := otlplogs.NewExporter(context.Background(), otlplogs.WithClient(otlplogshttp.NewClient(
-		otlplogshttp.WithEndpoint("localhost:4318"),
-		otlplogshttp.WithInsecure(),
-	)))
-	loggerProvider := sdk.NewLoggerProvider(
-		sdk.WithBatcher(exporter),
-		sdk.WithResource(newResource()),
-	)
-	hook := otelzerolog.NewHook(loggerProvider)
-
 	// Create zerolog instance with context fields
 	gLogger = zerolog.New(writers).With().
 		Timestamp().
 		Str("service_name", conf.ServiceInfo.Name).
 		Str("service_version", conf.ServiceInfo.Version).
 		Str("service_env", conf.ServiceInfo.Env).
-		Logger().
-		Hook(hook) // Add telemetry Hook
+		Logger()
+
+	if conf.EnableAPM {
+		hook, err := setupAPM(conf)
+		if err != nil {
+			return err
+		}
+		gLogger.Hook(hook) // Add telemetry Hook
+		log.Println("[INFO] hook apm to logger")
+	}
 
 	return nil
 }
@@ -158,4 +145,32 @@ func setupWriter(conf *config) (io.Writer, error) {
 
 	// Combine all writers
 	return io.MultiWriter(writers...), nil
+}
+
+func setupAPM(conf *config) (*otelzerolog.Hook, error) {
+	// configure opentelemetry logger provider
+	exporterClient := otlplogshttp.NewClient(
+		otlplogshttp.WithEndpoint(conf.ApmExporterEndpoint),
+		otlplogshttp.WithInsecure(),
+		otlplogshttp.WithHeaders(map[string]string{
+			"authorization": conf.ApmApiKey,
+		}),
+	)
+
+	// Default resource
+	rc := resource.NewWithAttributes(
+		semconv.SchemaURL,
+		semconv.ServiceName(conf.ServiceInfo.Name),
+		semconv.ServiceName(conf.ServiceInfo.Name),
+		semconv.ServiceVersion(conf.ServiceInfo.Version),
+	)
+
+	exporter, _ := otlplogs.NewExporter(context.Background(), otlplogs.WithClient(exporterClient))
+	loggerProvider := sdk.NewLoggerProvider(
+		sdk.WithBatcher(exporter),
+		sdk.WithResource(rc),
+	)
+	hook := otelzerolog.NewHook(loggerProvider)
+
+	return hook, nil
 }
