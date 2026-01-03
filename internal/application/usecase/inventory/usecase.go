@@ -47,7 +47,10 @@ func (uc *inventoryUC) ListProducts(ctx context.Context) (*ListProductsOutput, e
 	}, nil
 }
 
-func (uc *inventoryUC) InventoryReserve(ctx context.Context, req InventoryReserveInput) (*InventoryReservationView, error) {
+func (uc *inventoryUC) InventoryReserve(
+	ctx context.Context,
+	req InventoryReserveInput,
+) (*InventoryReservationView, error) {
 	reservations := make([]inventory.InventoryReservation, 0, len(req.Items))
 
 	err := uc.txManger.Do(ctx, func(txContext context.Context) error {

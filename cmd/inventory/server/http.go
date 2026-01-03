@@ -11,7 +11,9 @@ import (
 	"github.com/ductran999/letobserv/internal/bootstrap"
 	"github.com/ductran999/letobserv/internal/consts"
 	"github.com/ductran999/letobserv/internal/transport/inventory"
+	"github.com/ductran999/letobserv/internal/transport/middleware"
 	"github.com/gin-gonic/gin"
+	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
 )
 
 func RunHTTP(env *configs.InventoryEnv, app *bootstrap.InventoryBootstrap) error {
@@ -21,6 +23,10 @@ func RunHTTP(env *configs.InventoryEnv, app *bootstrap.InventoryBootstrap) error
 	hdl := inventory.NewInventoryHandler(app.InventoryUC)
 
 	r := gin.Default()
+	if env.ApmEnable {
+		r.Use(otelgin.Middleware(env.ServiceName))
+	}
+	r.Use(middleware.LoggingMiddleware())
 	generated.RegisterHandlers(r, hdl)
 
 	// Start http server

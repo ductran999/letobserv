@@ -120,9 +120,6 @@ linters:
     # Finds slice declarations with non-zero initial length [fast: false, auto-fix: false]
     # I would prefer to use https://github.com/alexkohler/prealloc
     - makezero
-    # Checks that there is no simultaneous return of `nil` error and an invalid value. [fast: false, auto-fix: false]
-    # FUTURE: would reduce checks and panics
-    - nilnil
     # nlreturn checks for a new line before return and branch statements to increase code clarity [fast: true, auto-fix: false]
     # DISCUSS: IMO the readability of does not always increase using more empty lines
     - nlreturn
@@ -204,10 +201,6 @@ linters:
     # Go linter to check the errors handling expressions.
     # Disable because some rules not go idiomatic. Like Not allow dynamic wraping error.
     - err113
-    # Check whether the function uses a non-inherited context.
-    - contextcheck
-    # Detects nested contexts in loops and function literals.
-    - fatcontext
     # Intrange is a linter to find places where for loops could make use of an integer range.
     # FUTURE: can apply this rules when this syntax are family to almost developer. This syntax only apply for go 1.22+
     - intrange
