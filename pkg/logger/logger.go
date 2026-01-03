@@ -61,7 +61,7 @@ func New(serviceInfo ServiceInfo, options ...ConfigOption) error {
 	}
 
 	// Create zerolog instance with context fields
-	gLogger = zerolog.New(writers).With().
+	l := zerolog.New(writers).With().
 		Timestamp().
 		Str("service_name", conf.ServiceInfo.Name).
 		Str("service_version", conf.ServiceInfo.Version).
@@ -73,9 +73,11 @@ func New(serviceInfo ServiceInfo, options ...ConfigOption) error {
 		if err != nil {
 			return err
 		}
-		gLogger.Hook(hook) // Add telemetry Hook
+		l.Hook(hook) // Add telemetry Hook
 		log.Println("[INFO] hook apm to logger")
 	}
+
+	gLogger = l
 
 	return nil
 }
@@ -160,12 +162,16 @@ func setupAPM(conf *config) (*otelzerolog.Hook, error) {
 	// Default resource
 	rc := resource.NewWithAttributes(
 		semconv.SchemaURL,
-		semconv.ServiceName(conf.ServiceInfo.Name),
+		semconv.DeploymentEnvironment(conf.ServiceInfo.Env),
 		semconv.ServiceName(conf.ServiceInfo.Name),
 		semconv.ServiceVersion(conf.ServiceInfo.Version),
 	)
 
-	exporter, _ := otlplogs.NewExporter(context.Background(), otlplogs.WithClient(exporterClient))
+	exporter, err := otlplogs.NewExporter(context.Background(), otlplogs.WithClient(exporterClient))
+	if err != nil {
+		return nil, err
+	}
+
 	loggerProvider := sdk.NewLoggerProvider(
 		sdk.WithBatcher(exporter),
 		sdk.WithResource(rc),

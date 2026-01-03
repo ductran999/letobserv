@@ -148,12 +148,12 @@ func WithLogRotation(maxSize, maxAge, maxBackups int, compress bool) ConfigOptio
 
 func WithAPM(apmConf APMConfig) ConfigOption {
 	return func(conf *config) error {
-		if err := apmConf.Validate(); err != nil {
-			return err
-		}
+		conf.EnableAPM = apmConf.Enable
 
-		if apmConf.Enable {
-			conf.EnableAPM = apmConf.Enable
+		if conf.EnableAPM {
+			if err := apmConf.Validate(); err != nil {
+				return err
+			}
 			conf.ApmApiKey = apmConf.ApiKey
 			conf.ApmExporterEndpoint = apmConf.ExporterEndpoint
 		}
