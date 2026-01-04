@@ -22,13 +22,9 @@ services:
     image: clickhouse/clickstack-all-in-one:2.11.0
     container_name: clickstack
     ports:
-      - "8123:8123"   # ClickHouse HTTP
-      - "9000:9000"   # ClickHouse Native
       - "4317:4317"   # OTLP gRPC
       - "4318:4318"   # OTLP HTTP
-    volumes:
-      - ./.docker/clickstack/data:/var/lib/clickhouse
-      - ./.docker/clickstack/logs:/var/log/clickhouse
+      - "8080:8080"   # UI Hyperdx
     restart: unless-stopped
 
   postgres:
