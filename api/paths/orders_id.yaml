@@ -1,0 +1,21 @@
+get:
+  tags:
+    - Order 
+  operationId: getOrder
+  summary: Order details
+  parameters:
+    - name: id
+      in: path
+      required: true
+      description: Order ID
+      schema:
+        type: string
+  responses:
+    '200':
+      description: Successful response
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../schemas/orders.yaml#/components/schemas/PlacedOrderDetails'

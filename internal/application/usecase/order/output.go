@@ -8,3 +8,9 @@ type PlacedOrderOutput struct {
 	ShippingAddress string
 	ShippingPhone   string
 }
+
+type PlacedOrder struct {
+	PlacedOrderOutput
+
+	Items []OrderItem
+}

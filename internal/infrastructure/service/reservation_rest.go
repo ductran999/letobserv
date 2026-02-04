@@ -2,6 +2,9 @@ package service
 
 import (
 	"context"
+	"fmt"
+	"net/http"
+	"net/url"
 
 	"github.com/ductran999/letobserv/internal/application/port/service"
 	"github.com/ductran999/letobserv/internal/application/usecase/order"
@@ -10,6 +13,7 @@ import (
 
 const (
 	inventoryReservationPath = "/inventory/reserve"
+	productDetailPath        = "/products"
 )
 
 type inventoryService struct {
@@ -33,6 +37,39 @@ func (svc *inventoryService) Reserve(ctx context.Context, req service.InventoryR
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
+		return order.ErrReserveInventory
+	}
+
+	return nil
+}
+
+func (svc *inventoryService) GetProduct(
+	ctx context.Context,
+	id string,
+) error {
+	baseURL := fmt.Sprintf(
+		"%s%s/%s",
+		svc.inventoryServiceURL,
+		productDetailPath,
+		id,
+	)
+
+	u, err := url.Parse(baseURL)
+	if err != nil {
+		return err
+	}
+
+	q := u.Query()
+	q.Set("fake", "true")
+	u.RawQuery = q.Encode()
+
+	resp, err := svc.client.Get(ctx, u.String(), httpclient.ReqHeader{})
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
 		return order.ErrReserveInventory
 	}
 

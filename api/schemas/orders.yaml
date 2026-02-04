@@ -79,3 +79,39 @@ components:
         order_number:
           type: string
           example: "ORD-2025-660e8400"
+
+    PlacedOrderDetails:
+      type: object
+      required:
+        - money
+        - shipping_address
+        - shipping_phone
+        - user_id
+        - order_id
+        - order_number
+        - order_items
+      properties:
+        money:
+          type: number
+          format: double
+          example: 99.5
+        shipping_address:
+          type: string
+          example: "123 Example Street, Hanoi, Vietnam"
+        shipping_phone:
+          type: string
+          example: "+84123456789"
+        user_id:
+          type: string
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        order_id:
+          type: string
+          example: "660e8400-e29b-41d4-a716-446655440000"
+        order_number:
+          type: string
+          example: "ORD-2025-660e8400"
+        order_items:
+          type: array
+          items:
+            schema:
+              $ref: "#/components/schemas/OrderItem"            

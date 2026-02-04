@@ -11,5 +11,8 @@ paths:
   /health:
     $ref: '../paths/internal.yaml'
 
+  /orders/{id}:
+    $ref: '../paths/orders_id.yaml'
+
   /orders:
     $ref: '../paths/orders.yaml' 

@@ -8,6 +8,7 @@ import (
 
 	"github.com/ductran999/letobserv/internal/application/port/service"
 	"github.com/ductran999/letobserv/internal/domain/order"
+	"github.com/ductran999/letobserv/pkg/errs"
 	"github.com/google/uuid"
 )
 
@@ -17,6 +18,8 @@ const (
 
 type OrderUseCase interface {
 	PlacePOrder(ctx context.Context, input PlaceOrderRequest) (*PlacedOrderOutput, error)
+
+	GetOrder(ctx context.Context, id string) (*PlacedOrder, error)
 }
 
 type placeOrderUsecase struct {
@@ -53,6 +56,36 @@ func (uc *placeOrderUsecase) PlacePOrder(ctx context.Context, input PlaceOrderRe
 	}
 
 	return &resp, nil
+}
+
+func (uc *placeOrderUsecase) GetOrder(ctx context.Context, id string) (*PlacedOrder, error) {
+	order, err := uc.orderRepo.GetByID(ctx, id)
+	if err != nil {
+		return nil, errs.Internal(err)
+	}
+
+	orderItems := make([]OrderItem, 0, len(order.Items))
+	for _, item := range order.Items {
+		_ = uc.inventoryService.GetProduct(ctx, item.ProductID)
+
+		orderItems = append(orderItems, OrderItem{
+			ID:        item.ID,
+			OrderID:   item.OrderID,
+			ProductID: item.ProductID,
+		})
+	}
+
+	return &PlacedOrder{
+		PlacedOrderOutput: PlacedOrderOutput{
+			ID:              order.ID,
+			OrderNumber:     order.OrderNumber,
+			UserID:          order.UserID,
+			Money:           order.Money,
+			ShippingAddress: order.ShippingAddress,
+			ShippingPhone:   order.ShippingPhone,
+		},
+		Items: orderItems,
+	}, nil
 }
 
 func (uc *placeOrderUsecase) prepareReserveRequest(order *order.Order) service.InventoryReserveRequest {
