@@ -55,7 +55,6 @@ func (r *orderPersistent) GetByID(ctx context.Context, id string) (*order.Order,
 }
 
 func (r *orderPersistent) mapToOrder(orderDTO OrderDTO, itemDTOs []OrderItemDTO) *order.Order {
-
 	return &order.Order{
 		ID:                   orderDTO.ID,
 		OrderNumber:          orderDTO.OrderNumber,
