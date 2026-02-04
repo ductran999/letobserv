@@ -2,7 +2,7 @@ get:
   tags:
     - Inventory 
   operationId: listProducts
-  summary: List product
+  summary: List product    
   responses:
     '200':
       description: Successful response

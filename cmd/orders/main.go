@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"log"
 
 	"github.com/ductran999/letobserv/cmd/orders/server"
@@ -21,7 +22,9 @@ func main() {
 
 	if err := server.RunHTTP(app, env); err != nil {
 		if env.ApmEnable {
-			app.APMAgent.Shutdown()
+			if err := app.APMAgent.Shutdown(context.Background()); err != nil {
+				log.Println("shutdown apm error: %w", err)
+			}
 		}
 		log.Fatalln("http server error:", err)
 	}

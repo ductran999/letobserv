@@ -1,13 +1,13 @@
 package bootstrap
 
 import (
+	"context"
 	"fmt"
 	"log"
 
 	"github.com/ductran999/dbkit"
 	"github.com/ductran999/letobserv/configs"
 	"github.com/ductran999/letobserv/internal/application/usecase/order"
-	"github.com/ductran999/letobserv/internal/consts"
 	domainOrder "github.com/ductran999/letobserv/internal/domain/order"
 	infraOrder "github.com/ductran999/letobserv/internal/infrastructure/order"
 	infraService "github.com/ductran999/letobserv/internal/infrastructure/service"
@@ -81,21 +81,18 @@ func connectOrderDB(env *configs.OrdersConfigEnv) (*gorm.DB, error) {
 }
 
 func newOrderServiceAPMAgent(env *configs.OrdersConfigEnv) (apm.APMAgent, error) {
-	logLevel := consts.LogInfoLevel
-	if env.ServiceEnv == consts.DeveloperEnv {
-		logLevel = consts.LogDebugLevel
-	}
-
 	config := apm.AgentConfig{
-		ServiceName:      env.ServiceName,
-		ServiceVersion:   env.ServiceVersion,
-		ServiceEnv:       env.ServiceEnv,
-		LogLevel:         logLevel,
-		ApiKey:           env.ApmApiKey,
+		ServiceInfo: apm.ServiceInfo{
+			Name:    env.ServiceName,
+			Version: env.ServiceVersion,
+			Env:     env.ServiceEnv,
+		},
+		APIKey:           env.ApmApiKey,
 		InsecureMode:     env.ApmInsecureMode,
 		ExporterEndpoint: env.ApmExporterEndpoint,
+		Enabled:          env.ApmEnable,
 	}
-	agent, err := apm.NewClickStackAPM(config)
+	agent, err := apm.NewAgent(context.Background(), config)
 	if err != nil {
 		return nil, err
 	}

@@ -3,6 +3,7 @@ package inventory
 import (
 	generated "github.com/ductran999/letobserv/api/generated/inventory"
 	"github.com/ductran999/letobserv/internal/application/usecase/inventory"
+	"github.com/ductran999/letobserv/internal/domain/product"
 	"github.com/google/uuid"
 )
 
@@ -36,6 +37,21 @@ func ToListProductInfoOpenAPI(output *inventory.ListProductsOutput) []generated.
 			Description: p.Description,
 			Price:       p.Price,
 		}
+	}
+
+	return resp
+}
+
+func ToProductInfoOpenAPI(output *product.Product) generated.ProductInfo {
+	if output == nil {
+		return generated.ProductInfo{}
+	}
+
+	resp := generated.ProductInfo{
+		Id:          output.ID,
+		Name:        output.Name,
+		Description: output.Description,
+		Price:       output.Price,
 	}
 
 	return resp

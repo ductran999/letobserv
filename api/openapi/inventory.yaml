@@ -13,6 +13,9 @@ paths:
 
   /products:
     $ref: '../paths/products.yaml'
+  
+  /products/{id}:
+    $ref: '../paths/products_id.yaml'
 
   /inventory/reserve:
     $ref: '../paths/inventory.yaml'

@@ -32,6 +32,64 @@ func (r *orderPersistent) Create(ctx context.Context, order *order.Order) error 
 	})
 }
 
+func (r *orderPersistent) GetByID(ctx context.Context, id string) (*order.Order, error) {
+	var orderDTO OrderDTO
+	if err := r.db.WithContext(ctx).
+		Table(orderDTO.TableName()).
+		Where("id = ?", id).
+		First(&orderDTO).
+		Error; err != nil {
+		return nil, err
+	}
+
+	var itemDTOs []OrderItemDTO
+	if err := r.db.WithContext(ctx).
+		Table((&OrderItemDTO{}).TableName()).
+		Where("order_id = ?", orderDTO.ID).
+		Find(&itemDTOs).
+		Error; err != nil {
+		return nil, err
+	}
+
+	return r.mapToOrder(orderDTO, itemDTOs), nil
+}
+
+func (r *orderPersistent) mapToOrder(orderDTO OrderDTO, itemDTOs []OrderItemDTO) *order.Order {
+	return &order.Order{
+		ID:                   orderDTO.ID,
+		OrderNumber:          orderDTO.OrderNumber,
+		UserID:               orderDTO.UserID,
+		Status:               order.OrderStatus(orderDTO.Status),
+		Money:                orderDTO.Money,
+		ShippingAddress:      orderDTO.ShippingAddress,
+		ShippingPhone:        orderDTO.ShippingPhone,
+		CreateAt:             orderDTO.CreatedAt,
+		PaymentTransactionID: orderDTO.PaymentTransactionID,
+		ShippingTrackingID:   orderDTO.ShippingTrackingID,
+		Items:                r.mapToItems(itemDTOs),
+	}
+}
+
+func (r *orderPersistent) mapToItems(itemDTOs []OrderItemDTO) []order.OrderItem {
+	if len(itemDTOs) == 0 {
+		return nil
+	}
+
+	items := make([]order.OrderItem, 0, len(itemDTOs))
+	for _, dto := range itemDTOs {
+		items = append(items, order.OrderItem{
+			OrderID:     dto.OrderID,
+			ID:          dto.ID,
+			UnitPrice:   dto.UnitPrice,
+			ProductID:   dto.OrderID,
+			ProductName: dto.ProductName,
+			Quantity:    dto.Quantity,
+		})
+	}
+
+	return items
+}
+
 func (r *orderPersistent) mapToOrderDTO(order *order.Order) *OrderDTO {
 	return &OrderDTO{
 		ID:                   order.ID,

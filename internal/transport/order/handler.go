@@ -48,3 +48,30 @@ func (hdl *orderHandler) PlaceOrder(c *gin.Context) {
 
 	response.Created(c, ToPlacedOrderInfoOpenAPI(placedOrder), "Order placed successfully!")
 }
+
+func (hdl *orderHandler) GetOrder(c *gin.Context, id string) {
+	result, err := hdl.orderUsecase.GetOrder(c.Request.Context(), id)
+	if err != nil {
+		response.InternalServerError(c, consts.InternalServerError, err)
+		return
+	}
+
+	response.OK(c, result, "get detail placed order successfully!")
+}
+
+func ToPlacedOrderDetailsOpenAPI(order order.PlacedOrder) generated.PlacedOrderDetails {
+	orderItems := make([]any, len(order.Items))
+	for i, item := range order.Items {
+		orderItems[i] = item
+	}
+
+	return generated.PlacedOrderDetails{
+		OrderId:         order.ID,
+		Money:           order.Money,
+		OrderItems:      orderItems,
+		OrderNumber:     order.OrderNumber,
+		ShippingAddress: order.ShippingAddress,
+		ShippingPhone:   order.ShippingPhone,
+		UserId:          order.UserID,
+	}
+}

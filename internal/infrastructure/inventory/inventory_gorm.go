@@ -73,7 +73,6 @@ func (r *inventoryPersistent) CreateReservation(ctx context.Context, reservation
 	}
 
 	dto := InventoryReservationDTO{
-		ID:        reservation.ID,
 		OrderID:   reservation.ID,
 		ProductID: reservation.ProductID,
 		Quantity:  reservation.Quantity,
