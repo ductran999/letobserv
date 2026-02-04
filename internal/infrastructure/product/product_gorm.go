@@ -29,6 +29,19 @@ func (repo *productPersistent) List(ctx context.Context) ([]product.Product, err
 	return product, nil
 }
 
+func (repo *productPersistent) GetByID(ctx context.Context, id string) (*product.Product, error) {
+	queryResult := ProductDTO{}
+	if err := repo.db.WithContext(ctx).
+		Table((&ProductDTO{}).TableName()).
+		Find(&queryResult).Error; err != nil {
+		return nil, err
+	}
+
+	p := repo.toProductEntity(&queryResult)
+
+	return &p, nil
+}
+
 func (repo *productPersistent) toProductEntity(p *ProductDTO) product.Product {
 	return product.Product{
 		ID:          p.ID.String(),

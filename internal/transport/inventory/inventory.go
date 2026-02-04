@@ -61,3 +61,12 @@ func (hdl *inventoryHandler) InventoryReserve(c *gin.Context) {
 
 	response.OK(c, ToReservationResponseOpenAPI(reservation), "inventory reserve successfully!")
 }
+
+func (hdl *inventoryHandler) GetProduct(c *gin.Context, id string) {
+	result, err := hdl.inventoryUC.GetProduct(c.Request.Context(), id)
+	if err != nil {
+		response.InternalServerError(c, "VIEW_PRODUCT_ERROR", err)
+	}
+
+	response.OK(c, ToProductInfoOpenAPI(result), "inventory reserve successfully!")
+}

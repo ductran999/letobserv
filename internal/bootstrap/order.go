@@ -1,6 +1,7 @@
 package bootstrap
 
 import (
+	"context"
 	"fmt"
 	"log"
 
@@ -89,8 +90,9 @@ func newOrderServiceAPMAgent(env *configs.OrdersConfigEnv) (apm.APMAgent, error)
 		APIKey:           env.ApmApiKey,
 		InsecureMode:     env.ApmInsecureMode,
 		ExporterEndpoint: env.ApmExporterEndpoint,
+		Enabled:          env.ApmEnable,
 	}
-	agent, err := apm.NewClickStackAPM(config)
+	agent, err := apm.NewAgent(context.Background(), config)
 	if err != nil {
 		return nil, err
 	}

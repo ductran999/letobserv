@@ -14,6 +14,8 @@ import (
 type InventoryUsecase interface {
 	ListProducts(ctx context.Context) (*ListProductsOutput, error)
 
+	GetProduct(ctx context.Context, id string) (*product.Product, error)
+
 	InventoryReserve(ctx context.Context, req InventoryReserveInput) (*InventoryReservationView, error)
 }
 
@@ -103,4 +105,13 @@ func (uc *inventoryUC) ToInventoryReservationView(reservations []inventory.Inven
 		Items:   reserveItems,
 		TTL:     reservations[0].ExpiredAt,
 	}
+}
+
+func (uc *inventoryUC) GetProduct(ctx context.Context, id string) (*product.Product, error) {
+	product, err := uc.productRepo.GetByID(ctx, id)
+	if err != nil {
+		return nil, errs.Internal(err)
+	}
+
+	return product, nil
 }
