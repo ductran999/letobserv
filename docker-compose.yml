@@ -22,8 +22,7 @@ services:
     networks:
       - localnet
     volumes:
-      - ./.docker/pg-data:/data/postgres
-      - ./docker/init:/docker-entrypoint-initdb.d
+      - pg_volume
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME}"]
       interval: 10s
@@ -64,6 +63,10 @@ services:
       - ./migrations/orders/schemas:/migrations
     networks:
       - localnet
+
+volumes:
+  pg_volume:
+    driver: local
 
 networks:
   localnet:
