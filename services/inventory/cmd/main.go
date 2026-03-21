@@ -1,26 +1,24 @@
 package main
 
 import (
-	"fmt"
 	"log"
+	"log/slog"
 
 	loader "github.com/ductran999/letobserv/pkg/config"
+	"github.com/ductran999/letobserv/services/inventory/internal/app"
 	"github.com/ductran999/letobserv/services/inventory/internal/config"
 )
 
 func main() {
-	env, err := loader.LoadConfig[config.Config](".env")
+	cfg, err := loader.LoadConfig[config.Config](".env")
 	if err != nil {
-		log.Fatalln("failed to load product config:", err)
+		log.Fatalln("load config failed", err)
 	}
-	fmt.Println(env)
+	slog.Info("load config successfully!")
 
-	// app, err := bootstrap.NewInventory(env)
-	// if err != nil {
-	// 	log.Fatalln("failed to create new order app:", err)
-	// }
-
-	// if err := server.RunHTTP(env, app); err != nil {
-	// 	log.Fatalln("start http server failed:", err)
-	// }
+	_, err = app.NewApp(cfg)
+	if err != nil {
+		log.Fatalln("init app failed:", err)
+	}
+	slog.Info("app initialized successfully!")
 }

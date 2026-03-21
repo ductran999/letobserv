@@ -1,0 +1,11 @@
+package: gen
+output: ../../gen/openapi/server.gen.go
+generate:
+  models: true
+  gin-server: true
+  strict-server: true
+output-options:
+  # to make sure that all types are generated
+  skip-prune: true
+import-mapping:
+  ../schemas/inventory.yaml: "-"

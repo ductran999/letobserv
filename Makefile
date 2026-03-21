@@ -10,10 +10,6 @@ help: ## Show help for each of the Makefile commands
 		/^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' \
 		$(MAKEFILE_LIST)
 
-.PHONY: tidy
-tidy: ## Tidy up the go.mod
-	go mod tidy
-
 .PHONY: lint
 lint: ## Run linters
 	golangci-lint run --timeout 10m --config .golangci.yml
@@ -68,3 +64,10 @@ api: ## Auto generate api code specify in file api.spec.yml
 	go get github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen
 	go generate ./...
 	go mod tidy
+
+.PHONY: tidy
+tidy:
+	go work sync
+	go mod tidy -C pkg
+	go mod tidy -C services/inventory
+	go mod tidy -C services/placement
