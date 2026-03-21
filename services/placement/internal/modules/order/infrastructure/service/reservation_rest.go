@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/ductran999/letobserv/internal/application/port/service"
-	"github.com/ductran999/letobserv/internal/application/usecase/order"
 	"github.com/ductran999/letobserv/pkg/httpclient"
+	order "github.com/ductran999/letobserv/services/placement/internal/modules/order/domain"
+	orderuc "github.com/ductran999/letobserv/services/placement/internal/modules/order/usecase"
 )
 
 const (
@@ -28,7 +28,7 @@ func NewInventoryService(client httpclient.Client, inventoryServiceURL string) *
 	}
 }
 
-func (svc *inventoryService) Reserve(ctx context.Context, req service.InventoryReserveRequest) error {
+func (svc *inventoryService) Reserve(ctx context.Context, req order.InventoryReserveRequest) error {
 	url := svc.inventoryServiceURL + inventoryReservationPath
 	resp, err := svc.client.Post(ctx, url, req, nil)
 	if err != nil {
@@ -37,7 +37,7 @@ func (svc *inventoryService) Reserve(ctx context.Context, req service.InventoryR
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		return order.ErrReserveInventory
+		return orderuc.ErrReserveInventory
 	}
 
 	return nil
@@ -70,7 +70,7 @@ func (svc *inventoryService) GetProduct(
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return order.ErrReserveInventory
+		return orderuc.ErrReserveInventory
 	}
 
 	return nil

@@ -1,16 +1,16 @@
 package handler
 
 import (
-	generated "github.com/ductran999/letobserv/api/generated/orders"
-	"github.com/ductran999/letobserv/internal/application/usecase/order"
+	gen "github.com/ductran999/letobserv/services/placement/api/gen/orders"
+	orderuc "github.com/ductran999/letobserv/services/placement/internal/modules/order/usecase"
 )
 
 // --------- Map OpenAPI struct to Handler --------------
 
-func FromPlaceOrderOpenAPIRequest(body *generated.PlaceOrderJSONRequestBody) *order.PlaceOrderRequest {
-	items := make([]order.OrderItem, 0, len(body.Items))
+func FromPlaceOrderOpenAPIRequest(body *gen.PlaceOrderJSONRequestBody) *orderuc.PlaceOrderRequest {
+	items := make([]orderuc.OrderItem, 0, len(body.Items))
 	for _, item := range body.Items {
-		items = append(items, order.OrderItem{
+		items = append(items, orderuc.OrderItem{
 			ProductID:   item.ProductId,
 			ProductName: item.ProductName,
 			Quantity:    int(item.Quantity),
@@ -18,7 +18,7 @@ func FromPlaceOrderOpenAPIRequest(body *generated.PlaceOrderJSONRequestBody) *or
 		})
 	}
 
-	return &order.PlaceOrderRequest{
+	return &orderuc.PlaceOrderRequest{
 		UserID:          body.UserID.String(),
 		Money:           body.Money,
 		ShippingAddress: body.ShippingAddress,
@@ -29,8 +29,8 @@ func FromPlaceOrderOpenAPIRequest(body *generated.PlaceOrderJSONRequestBody) *or
 
 // --------- Map Handler to OpenAPI struct ------------------
 
-func ToPlacedOrderInfoOpenAPI(output *order.PlacedOrderOutput) *generated.PlacedOrderInfo {
-	return &generated.PlacedOrderInfo{
+func ToPlacedOrderInfoOpenAPI(output *orderuc.PlacedOrderOutput) *gen.PlacedOrderInfo {
+	return &gen.PlacedOrderInfo{
 		OrderId:         output.ID,
 		UserId:          output.UserID,
 		OrderNumber:     output.OrderNumber,

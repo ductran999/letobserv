@@ -1,4 +1,4 @@
-package order
+package orderuc
 
 type PlacedOrderOutput struct {
 	ID              string

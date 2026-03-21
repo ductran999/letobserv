@@ -1,4 +1,4 @@
-package order
+package orderuc
 
 import (
 	"context"
@@ -6,9 +6,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ductran999/letobserv/internal/application/port/service"
-	"github.com/ductran999/letobserv/internal/domain/order"
 	"github.com/ductran999/letobserv/pkg/errs"
+	order "github.com/ductran999/letobserv/services/placement/internal/modules/order/domain"
 	"github.com/google/uuid"
 )
 
@@ -23,15 +22,14 @@ type OrderUseCase interface {
 }
 
 type placeOrderUsecase struct {
-	orderRepo order.OrderRepository
-
-	inventoryService service.InventoryRestful
+	orderRepo      order.OrderRepository
+	inventoryorder order.InventoryRestful
 }
 
-func NewOrderUseCase(orderRepo order.OrderRepository, inventoryService service.InventoryRestful) OrderUseCase {
+func NewOrderUseCase(orderRepo order.OrderRepository, inventoryorder order.InventoryRestful) OrderUseCase {
 	return &placeOrderUsecase{
-		orderRepo:        orderRepo,
-		inventoryService: inventoryService,
+		orderRepo:      orderRepo,
+		inventoryorder: inventoryorder,
 	}
 }
 
@@ -42,7 +40,7 @@ func (uc *placeOrderUsecase) PlacePOrder(ctx context.Context, input PlaceOrderRe
 	}
 
 	reserveReq := uc.prepareReserveRequest(order)
-	if err := uc.inventoryService.Reserve(ctx, reserveReq); err != nil {
+	if err := uc.inventoryorder.Reserve(ctx, reserveReq); err != nil {
 		return nil, err
 	}
 
@@ -66,7 +64,7 @@ func (uc *placeOrderUsecase) GetOrder(ctx context.Context, id string) (*PlacedOr
 
 	orderItems := make([]OrderItem, 0, len(order.Items))
 	for _, item := range order.Items {
-		_ = uc.inventoryService.GetProduct(ctx, item.ProductID)
+		_ = uc.inventoryorder.GetProduct(ctx, item.ProductID)
 
 		orderItems = append(orderItems, OrderItem{
 			ID:        item.ID,
@@ -88,20 +86,21 @@ func (uc *placeOrderUsecase) GetOrder(ctx context.Context, id string) (*PlacedOr
 	}, nil
 }
 
-func (uc *placeOrderUsecase) prepareReserveRequest(order *order.Order) service.InventoryReserveRequest {
-	reserveItems := make([]service.ReserveItem, 0)
-	for _, item := range order.Items {
-		reserveItems = append(reserveItems, service.ReserveItem{
-			ProductID: item.ProductID,
-			Quantity:  item.Quantity,
-		})
-	}
+func (uc *placeOrderUsecase) prepareReserveRequest(o *order.Order) order.InventoryReserveRequest {
+	// reserveItems := make([]order.ReserveItem, 0)
+	// for _, item := range order.Items {
+	// 	reserveItems = append(reserveItems, order.ReserveItem{
+	// 		ProductID: item.ProductID,
+	// 		Quantity:  item.Quantity,
+	// 	})
+	// }
 
-	return service.InventoryReserveRequest{
-		OrderID: order.ID,
-		Items:   reserveItems,
-		TTL:     defaultReserveTTL,
-	}
+	// return order.InventoryReserveRequest{
+	// 	OrderID: order.ID,
+	// 	Items:   reserveItems,
+	// 	TTL:     defaultReserveTTL,
+	// }
+	return order.InventoryReserveRequest{}
 }
 
 func (uc *placeOrderUsecase) mapPlaceOrderRequestToEntity(input PlaceOrderRequest) *order.Order {

@@ -1,11 +1,11 @@
-package: generated
-output: ../generated/orders/server.gen.go
+package: gen
+output: ../../gen/orders/server.gen.go
 generate:
   models: true
   gin-server: true
   strict-server: true
 output-options:
-  # to make sure that all types are generated
+  # to make sure that all types are gen
   skip-prune: true
 import-mapping:
   ../schemas/orders.yaml: "-"

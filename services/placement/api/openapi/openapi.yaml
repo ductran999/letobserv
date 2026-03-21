@@ -9,10 +9,10 @@ servers:
 
 paths:
   /health:
-    $ref: '../paths/internal.yaml'
+    $ref: './paths/internal.yaml'
 
   /orders/{id}:
-    $ref: '../paths/orders_id.yaml'
+    $ref: './paths/orders_id.yaml'
 
   /orders:
-    $ref: '../paths/orders.yaml' 
+    $ref: './paths/orders.yaml' 

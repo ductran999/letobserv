@@ -3,7 +3,7 @@ package order
 import (
 	"context"
 
-	"github.com/ductran999/letobserv/internal/domain/order"
+	order "github.com/ductran999/letobserv/services/placement/internal/modules/order/domain"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )

@@ -3,11 +3,11 @@ package handler
 import (
 	"time"
 
-	generated "github.com/ductran999/letobserv/api/generated/orders"
-	"github.com/ductran999/letobserv/internal/application/usecase/order"
-	"github.com/ductran999/letobserv/internal/consts"
 	"github.com/ductran999/letobserv/pkg/request"
 	"github.com/ductran999/letobserv/pkg/response"
+	gen "github.com/ductran999/letobserv/services/placement/api/gen/orders"
+	"github.com/ductran999/letobserv/services/placement/internal/consts"
+	order "github.com/ductran999/letobserv/services/placement/internal/modules/order/usecase"
 	"github.com/gin-gonic/gin"
 )
 
@@ -26,14 +26,14 @@ func NewOrderHandler(orderUsecase order.OrderUseCase) *orderHandler {
 func (hdl *orderHandler) HealthCheck(c *gin.Context) {
 	uptime := int64(time.Since(hdl.startUpAt).Seconds())
 	resp := gin.H{
-		"status": consts.HealthyState,
+		"status": "healthy",
 		"uptime": uptime,
 	}
 	response.OK(c, resp, "OK")
 }
 
 func (hdl *orderHandler) PlaceOrder(c *gin.Context) {
-	body, err := request.ParseBody[generated.PlaceOrderJSONRequestBody](c)
+	body, err := request.ParseBody[gen.PlaceOrderJSONRequestBody](c)
 	if err != nil {
 		response.BadRequest(c, consts.BadRequest, err)
 		return
@@ -59,13 +59,13 @@ func (hdl *orderHandler) GetOrder(c *gin.Context, id string) {
 	response.OK(c, result, "get detail placed order successfully!")
 }
 
-func ToPlacedOrderDetailsOpenAPI(order order.PlacedOrder) generated.PlacedOrderDetails {
+func ToPlacedOrderDetailsOpenAPI(order order.PlacedOrder) gen.PlacedOrderDetails {
 	orderItems := make([]any, len(order.Items))
 	for i, item := range order.Items {
 		orderItems[i] = item
 	}
 
-	return generated.PlacedOrderDetails{
+	return gen.PlacedOrderDetails{
 		OrderId:         order.ID,
 		Money:           order.Money,
 		OrderItems:      orderItems,
