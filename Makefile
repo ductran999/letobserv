@@ -55,6 +55,12 @@ run-order: ## Start order service
 feed: ## Feed data
 	@bash -c 'set -a && source ./.env && set +a && ./scripts/feed_data.sh'
 
+.PHONEY: governance
+governance: ## Run governance service
+	go mod tidy -v
+	go fmt ./...
+	go vet ./...
+
 .PHONY: api
 api: ## Auto generate api code specify in file api.spec.yml
 	rm -f ./api/generated/orders/*

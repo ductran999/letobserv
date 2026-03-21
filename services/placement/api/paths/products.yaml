@@ -1,0 +1,14 @@
+get:
+  tags:
+    - Inventory 
+  operationId: listProducts
+  summary: List product    
+  responses:
+    '200':
+      description: Successful response
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../schemas/inventory.yaml#/components/schemas/ProductInfo'

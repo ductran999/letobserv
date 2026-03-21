@@ -1,0 +1,19 @@
+get:
+  tags:
+    - Inventory 
+  operationId: getProduct
+  summary: get detail of product
+  parameters:
+    - name: id
+      in: path
+      required: true
+      description: Product ID
+      schema:
+        type: string
+  responses:
+    '200':
+      description: Successful response
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/inventory.yaml#/components/schemas/ProductInfo'
