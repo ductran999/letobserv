@@ -5,7 +5,7 @@ import (
 	product "github.com/ductran999/letobserv/services/inventory/internal/modules/product/domain"
 )
 
-func ToListProductInfoOpenAPI(output *product.ListProductsOutput) []gen.ProductInfo {
+func toListProductInfoOpenAPI(output *product.ListProductsOutput) []gen.ProductInfo {
 	if len(output.Products) == 0 {
 		return []gen.ProductInfo{}
 	}
@@ -18,6 +18,21 @@ func ToListProductInfoOpenAPI(output *product.ListProductsOutput) []gen.ProductI
 			Description: p.Description,
 			Price:       p.Price,
 		}
+	}
+
+	return resp
+}
+
+func toProductInfoOpenAPI(output *product.Product) gen.ProductInfo {
+	if output == nil {
+		return gen.ProductInfo{}
+	}
+
+	resp := gen.ProductInfo{
+		Id:          output.ID,
+		Name:        output.Name,
+		Description: output.Description,
+		Price:       output.Price,
 	}
 
 	return resp

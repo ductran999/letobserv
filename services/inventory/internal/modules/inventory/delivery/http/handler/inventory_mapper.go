@@ -23,21 +23,6 @@ func FromOpenApiInventoryReserveRequest(body *gen.InventoryReserveRequest) *inve
 	}
 }
 
-// func ToProductInfoOpenAPI(output *product.Product) gen.ProductInfo {
-// 	if output == nil {
-// 		return gen.ProductInfo{}
-// 	}
-
-// 	resp := gen.ProductInfo{
-// 		Id:          output.ID,
-// 		Name:        output.Name,
-// 		Description: output.Description,
-// 		Price:       output.Price,
-// 	}
-
-// 	return resp
-// }
-
 func ToReservationResponseOpenAPI(reservation *inventoryuc.InventoryReservationView) *gen.ReservationResponse {
 	reservationItems := make([]gen.ReservationItem, len(reservation.Items))
 	for i, rev := range reservation.Items {

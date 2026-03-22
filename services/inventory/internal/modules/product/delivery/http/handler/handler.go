@@ -31,14 +31,14 @@ func (hdl *handler) ListProducts(c *gin.Context) {
 		_ = c.Error(err)
 	}
 
-	response.OK(c, ToListProductInfoOpenAPI(products), "List  product successfully!")
+	response.OK(c, toListProductInfoOpenAPI(products), "List  product successfully!")
 }
 
 func (hdl *handler) GetProduct(c *gin.Context, id string) {
-	// result, err := hdl.inventoryUC.GetProduct(c.Request.Context(), id)
-	// if err != nil {
-	// 	response.InternalServerError(c, "VIEW_PRODUCT_ERROR", err)
-	// }
+	p, err := hdl.productUC.GetByID(c.Request.Context(), id)
+	if err != nil {
+		response.InternalServerError(c, "VIEW_PRODUCT_ERROR", err)
+	}
 
-	response.OK(c, nil, "inventory reserve successfully!")
+	response.OK(c, toProductInfoOpenAPI(p), "inventory reserve successfully!")
 }

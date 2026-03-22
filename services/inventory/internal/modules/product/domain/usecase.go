@@ -10,4 +10,5 @@ type ListProductsOutput struct {
 
 type Usecase interface {
 	List(ctx context.Context) (*ListProductsOutput, error)
+	GetByID(ctx context.Context, id string) (*Product, error)
 }
