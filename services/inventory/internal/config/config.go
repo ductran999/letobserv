@@ -3,6 +3,7 @@ package config
 import (
 	"github.com/ductran999/letobserv/pkg/apm"
 	"github.com/ductran999/letobserv/pkg/database"
+	"github.com/ductran999/letobserv/pkg/logger"
 )
 
 type Config struct {
@@ -52,5 +53,21 @@ func (c *Config) APMConfig() apm.AgentConfig {
 		InsecureMode:     c.ApmInsecureMode,
 		ExporterEndpoint: c.ApmExporterEndpoint,
 		Enabled:          c.ApmEnable,
+	}
+}
+
+func (c *Config) GetLoggerConfig() logger.ServiceInfo {
+	return logger.ServiceInfo{
+		Name:    c.ServiceName,
+		Version: c.ServiceVersion,
+		Env:     c.ServiceEnv,
+	}
+}
+
+func (c *Config) GetLoggerAPMConfig() logger.APMConfig {
+	return logger.APMConfig{
+		Enable:           c.ApmEnable,
+		ExporterEndpoint: c.ApmExporterEndpoint,
+		ApiKey:           c.ApmApiKey,
 	}
 }

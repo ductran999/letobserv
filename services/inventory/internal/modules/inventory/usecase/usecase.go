@@ -19,13 +19,13 @@ type InventoryUsecase interface {
 type inventoryUC struct {
 	txManger txmanager.TransactionManager
 
-	productRepo   product.ProductRepository
+	productRepo   product.Repository
 	inventoryRepo inventory.InventoryRepo
 }
 
 func NewInventoryUsecase(
 	txManger txmanager.TransactionManager,
-	productRepo product.ProductRepository,
+	productRepo product.Repository,
 	inventoryRepo inventory.InventoryRepo,
 ) InventoryUsecase {
 	return &inventoryUC{
@@ -65,7 +65,7 @@ func (uc *inventoryUC) InventoryReserve(
 				OrderID:   req.OrderID,
 				ProductID: product.ProductID,
 				Quantity:  product.Quantity,
-				Status:    inventory.ReservedStatus,
+				Status:    inventory.ReservationStatusReserved,
 				CreatedAt: now,
 				UpdatedAt: now,
 				ExpiredAt: now.Add(time.Duration(req.TTL)),

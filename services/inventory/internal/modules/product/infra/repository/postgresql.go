@@ -11,7 +11,10 @@ type productPersistent struct {
 	db *gorm.DB
 }
 
-func NewProductRepo(db *gorm.DB) *productPersistent {
+func NewRepository(db *gorm.DB) *productPersistent {
+	if db == nil {
+		panic("db cannot be nil")
+	}
 	return &productPersistent{db: db}
 }
 
@@ -23,7 +26,7 @@ func (repo *productPersistent) List(ctx context.Context) ([]product.Product, err
 
 	product := make([]product.Product, len(queryResult))
 	for i, r := range queryResult {
-		product[i] = r.ToProductEntity()
+		product[i] = r.toProductEntity()
 	}
 
 	return product, nil
@@ -37,7 +40,7 @@ func (repo *productPersistent) GetByID(ctx context.Context, id string) (*product
 		return nil, err
 	}
 
-	p := queryResult.ToProductEntity()
+	p := queryResult.toProductEntity()
 
 	return &p, nil
 }

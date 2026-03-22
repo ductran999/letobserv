@@ -19,9 +19,6 @@ type InventoryReserveJSONRequestBody = InventoryReserveRequest
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
-	// Health check
-	// (GET /health)
-	HealthCheck(c *gin.Context)
 	// Reserve stock for an order before payment
 	// (POST /inventory/reserve)
 	InventoryReserve(c *gin.Context)
@@ -41,19 +38,6 @@ type ServerInterfaceWrapper struct {
 }
 
 type MiddlewareFunc func(c *gin.Context)
-
-// HealthCheck operation middleware
-func (siw *ServerInterfaceWrapper) HealthCheck(c *gin.Context) {
-
-	for _, middleware := range siw.HandlerMiddlewares {
-		middleware(c)
-		if c.IsAborted() {
-			return
-		}
-	}
-
-	siw.Handler.HealthCheck(c)
-}
 
 // InventoryReserve operation middleware
 func (siw *ServerInterfaceWrapper) InventoryReserve(c *gin.Context) {
@@ -132,25 +116,9 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 		ErrorHandler:       errorHandler,
 	}
 
-	router.GET(options.BaseURL+"/health", wrapper.HealthCheck)
 	router.POST(options.BaseURL+"/inventory/reserve", wrapper.InventoryReserve)
 	router.GET(options.BaseURL+"/products", wrapper.ListProducts)
 	router.GET(options.BaseURL+"/products/:id", wrapper.GetProduct)
-}
-
-type HealthCheckRequestObject struct {
-}
-
-type HealthCheckResponseObject interface {
-	VisitHealthCheckResponse(w http.ResponseWriter) error
-}
-
-type HealthCheck200Response struct {
-}
-
-func (response HealthCheck200Response) VisitHealthCheckResponse(w http.ResponseWriter) error {
-	w.WriteHeader(200)
-	return nil
 }
 
 type InventoryReserveRequestObject struct {
@@ -205,9 +173,6 @@ func (response GetProduct200JSONResponse) VisitGetProductResponse(w http.Respons
 
 // StrictServerInterface represents all server handlers.
 type StrictServerInterface interface {
-	// Health check
-	// (GET /health)
-	HealthCheck(ctx context.Context, request HealthCheckRequestObject) (HealthCheckResponseObject, error)
 	// Reserve stock for an order before payment
 	// (POST /inventory/reserve)
 	InventoryReserve(ctx context.Context, request InventoryReserveRequestObject) (InventoryReserveResponseObject, error)
@@ -229,31 +194,6 @@ func NewStrictHandler(ssi StrictServerInterface, middlewares []StrictMiddlewareF
 type strictHandler struct {
 	ssi         StrictServerInterface
 	middlewares []StrictMiddlewareFunc
-}
-
-// HealthCheck operation middleware
-func (sh *strictHandler) HealthCheck(ctx *gin.Context) {
-	var request HealthCheckRequestObject
-
-	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
-		return sh.ssi.HealthCheck(ctx, request.(HealthCheckRequestObject))
-	}
-	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "HealthCheck")
-	}
-
-	response, err := handler(ctx, request)
-
-	if err != nil {
-		ctx.Error(err)
-		ctx.Status(http.StatusInternalServerError)
-	} else if validResponse, ok := response.(HealthCheckResponseObject); ok {
-		if err := validResponse.VisitHealthCheckResponse(ctx.Writer); err != nil {
-			ctx.Error(err)
-		}
-	} else if response != nil {
-		ctx.Error(fmt.Errorf("unexpected response type: %T", response))
-	}
 }
 
 // InventoryReserve operation middleware

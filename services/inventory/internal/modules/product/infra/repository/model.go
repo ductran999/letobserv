@@ -18,7 +18,7 @@ type ProductGORM struct {
 
 func (p *ProductGORM) TableName() string { return "products" }
 
-func (p *ProductGORM) ToProductEntity() product.Product {
+func (p *ProductGORM) toProductEntity() product.Product {
 	return product.Product{
 		ID:          p.ID.String(),
 		Name:        p.Name,

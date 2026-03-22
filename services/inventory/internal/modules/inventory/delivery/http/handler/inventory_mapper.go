@@ -1,4 +1,4 @@
-package inventory
+package inventoryhttp
 
 import (
 	gen "github.com/ductran999/letobserv/services/inventory/api/gen/openapi"
@@ -22,24 +22,6 @@ func FromOpenApiInventoryReserveRequest(body *gen.InventoryReserveRequest) *inve
 		TTL:     body.TtlSeconds,
 	}
 }
-
-// func ToListProductInfoOpenAPI(output *inventory.ListProductsOutput) []gen.ProductInfo {
-// 	if output == nil {
-// 		return []gen.ProductInfo{}
-// 	}
-
-// 	resp := make([]gen.ProductInfo, len(output.Products))
-// 	for i, p := range output.Products {
-// 		resp[i] = gen.ProductInfo{
-// 			Id:          p.ID,
-// 			Name:        p.Name,
-// 			Description: p.Description,
-// 			Price:       p.Price,
-// 		}
-// 	}
-
-// 	return resp
-// }
 
 // func ToProductInfoOpenAPI(output *product.Product) gen.ProductInfo {
 // 	if output == nil {

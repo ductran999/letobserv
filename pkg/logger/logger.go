@@ -38,10 +38,10 @@ var gLogger zerolog.Logger
 //	}
 //
 // Options can override defaults, e.g., enabling file logging, rotation, or compression.
-func New(serviceInfo ServiceInfo, options ...ConfigOption) error {
+func New(serviceInfo ServiceInfo, options ...ConfigOption) (*zerolog.Logger, error) {
 	// Validate basic service metadata
 	if err := serviceInfo.Validate(); err != nil {
-		return err
+		return nil, err
 	}
 
 	// Initialize configuration with default values
@@ -50,14 +50,14 @@ func New(serviceInfo ServiceInfo, options ...ConfigOption) error {
 	// Apply user-provided configuration options
 	for _, opt := range options {
 		if err := opt(conf); err != nil {
-			return err
+			return nil, err
 		}
 	}
 
 	// Prepare the log writers (e.g., console, file)
 	writers, err := setupWriter(conf)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	// Create zerolog instance with context fields
@@ -71,7 +71,7 @@ func New(serviceInfo ServiceInfo, options ...ConfigOption) error {
 	if conf.EnableAPM {
 		hook, err := setupAPM(conf)
 		if err != nil {
-			return err
+			return nil, err
 		}
 		l.Hook(hook) // Add telemetry Hook
 		log.Println("[INFO] hook apm to logger")
@@ -79,7 +79,7 @@ func New(serviceInfo ServiceInfo, options ...ConfigOption) error {
 
 	gLogger = l
 
-	return nil
+	return &l, nil
 }
 
 // Logger returns a logger derived from the global logger gLogger,

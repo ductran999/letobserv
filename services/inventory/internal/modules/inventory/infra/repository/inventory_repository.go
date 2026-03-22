@@ -1,4 +1,4 @@
-package inventory
+package inventoryrepo
 
 import (
 	"context"
@@ -76,7 +76,7 @@ func (r *inventoryPersistent) CreateReservation(ctx context.Context, reservation
 		OrderID:   reservation.ID,
 		ProductID: reservation.ProductID,
 		Quantity:  reservation.Quantity,
-		Status:    inventory.ReservationReserved,
+		Status:    inventory.ReservationStatusReserved,
 		CreatedAt: reservation.CreatedAt,
 		UpdatedAt: reservation.UpdatedAt,
 		ExpiredAt: reservation.ExpiredAt,

@@ -5,9 +5,9 @@ import "time"
 type ReservationStatus string
 
 const (
-	ReservationReserved  ReservationStatus = "RESERVED"
-	ReservationConfirmed ReservationStatus = "CONFIRMED"
-	ReservationReleased  ReservationStatus = "RELEASED"
+	ReservationStatusReserved  ReservationStatus = "RESERVED"
+	ReservationStatusConfirmed ReservationStatus = "CONFIRMED"
+	ReservationStatusReleased  ReservationStatus = "RELEASED"
 )
 
 type InventoryReservation struct {

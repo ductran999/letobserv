@@ -30,37 +30,33 @@ services:
       start_interval: 60s
     restart: unless-stopped
 
-  # migrate_inventory_db:
-  #   image: migrate/migrate
-  #   container_name: migrate_inventory_db
-  #   env_file:
-  #     - .env
-  #   depends_on:
-  #     postgres:
-  #       condition: service_healthy
-  #   entrypoint: [/wait-and-migrate.sh]
-  #   restart: "no"
-  #   volumes:
-  #     - ./scripts/migrate_inventory_db.sh:/wait-and-migrate.sh
-  #     - ./migrations/inventory/schemas:/migrations
-  #   networks:
-  #     - localnet
+  migrate_inventory_db:
+    image: migrate/migrate
+    container_name: migrate_inventory_db
+    depends_on:
+      postgres:
+        condition: service_healthy
+    entrypoint: [/wait-and-migrate.sh]
+    restart: "no"
+    volumes:
+      - ./scripts/migrate_inventory_db.sh:/wait-and-migrate.sh
+      - ./services/inventory/migrations/schemas:/migrations
+    networks:
+      - localnet
   
-  # migrate_order_db:
-  #   image: migrate/migrate
-  #   container_name: migrate_order_db
-  #   env_file:
-  #     - .env
-  #   depends_on:
-  #     postgres:
-  #       condition: service_healthy
-  #   entrypoint: [/wait-and-migrate.sh]
-  #   restart: "no"
-  #   volumes:
-  #     - ./scripts/migrate_orders_db.sh:/wait-and-migrate.sh
-  #     - ./migrations/orders/schemas:/migrations
-  #   networks:
-  #     - localnet
+  migrate_order_db:
+    image: migrate/migrate
+    container_name: migrate_order_db
+    depends_on:
+      postgres:
+        condition: service_healthy
+    entrypoint: [/wait-and-migrate.sh]
+    restart: "no"
+    volumes:
+      - ./scripts/migrate_placement_db.sh:/wait-and-migrate.sh
+      - ./migrations/orders/schemas:/migrations
+    networks:
+      - localnet
 
 volumes:
   pg-data:

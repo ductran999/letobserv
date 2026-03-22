@@ -43,6 +43,13 @@ func (a *noopAgent) Shutdown(ctx context.Context) error {
 	return nil
 }
 
+func NewAgentIfEnabled(ctx context.Context, cfg AgentConfig) (APMAgent, error) {
+	if !cfg.Enabled {
+		return nil, nil
+	}
+	return NewAgent(ctx, cfg)
+}
+
 func NewAgent(ctx context.Context, cfg AgentConfig) (APMAgent, error) {
 	if !cfg.Enabled {
 		return &noopAgent{}, nil

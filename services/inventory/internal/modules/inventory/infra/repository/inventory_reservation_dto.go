@@ -1,4 +1,4 @@
-package inventory
+package inventoryrepo
 
 import (
 	"time"

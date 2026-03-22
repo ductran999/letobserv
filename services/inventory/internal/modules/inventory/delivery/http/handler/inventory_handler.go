@@ -1,4 +1,4 @@
-package inventory
+package inventoryhttp
 
 import (
 	"time"
@@ -14,41 +14,27 @@ const (
 	ReservationErrorCode = "RESERVED_FAILED"
 )
 
-type inventoryHandler struct {
+type InventoryHandler interface {
+	InventoryReserve(c *gin.Context)
+}
+
+type handler struct {
 	inventoryUC inventoryuc.InventoryUsecase
 	startUpAt   time.Time
 }
 
-func NewInventoryHandler(uc inventoryuc.InventoryUsecase) *inventoryHandler {
+func NewHandler(uc inventoryuc.InventoryUsecase) InventoryHandler {
 	if uc == nil {
 		panic("inventory cannot be nil")
 	}
 
-	return &inventoryHandler{
+	return &handler{
 		inventoryUC: uc,
 		startUpAt:   time.Now(),
 	}
 }
 
-func (hdl *inventoryHandler) HealthCheck(c *gin.Context) {
-	uptime := int64(time.Since(hdl.startUpAt).Seconds())
-	resp := gin.H{
-		"status": "Healthy",
-		"uptime": uptime,
-	}
-	response.OK(c, resp, "OK")
-}
-
-func (hdl *inventoryHandler) ListProducts(c *gin.Context) {
-	// result, err := hdl.inventoryUC.ListProducts(c.Request.Context())
-	// if err != nil {
-	// 	_ = c.Error(err)
-	// }
-
-	response.OK(c, nil, "List  product successfully!")
-}
-
-func (hdl *inventoryHandler) InventoryReserve(c *gin.Context) {
+func (hdl *handler) InventoryReserve(c *gin.Context) {
 	body, err := request.ParseBody[gen.InventoryReserveRequest](c)
 	if err != nil {
 		response.BadRequest(c, ReservationErrorCode, err)
@@ -64,13 +50,4 @@ func (hdl *inventoryHandler) InventoryReserve(c *gin.Context) {
 	}
 
 	response.OK(c, ToReservationResponseOpenAPI(reservation), "inventory reserve successfully!")
-}
-
-func (hdl *inventoryHandler) GetProduct(c *gin.Context, id string) {
-	// result, err := hdl.inventoryUC.GetProduct(c.Request.Context(), id)
-	// if err != nil {
-	// 	response.InternalServerError(c, "VIEW_PRODUCT_ERROR", err)
-	// }
-
-	response.OK(c, nil, "inventory reserve successfully!")
 }

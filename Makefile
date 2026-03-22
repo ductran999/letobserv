@@ -20,27 +20,15 @@ deps: ## install library
 
 .PHONY: restart 
 restart: ## Reset demo
-	docker-compose down
-	@if [ ! -f .env ]; then \
-		cp .env.example .env; \
-		echo "Copied .env.example → .env"; \
-	else \
-		echo ".env already exists, skipping copy."; \
-	fi
+	docker-compose down -v
 	docker-compose up -d
 
 .PHONY: setup
 setup: ## Setup demo dependencies
-	@if [ ! -f .env ]; then \
-		cp .env.example .env; \
-		echo "Copied .env.example → .env"; \
-	else \
-		echo ".env already exists, skipping copy."; \
-	fi
 	docker-compose up -d
 
 .PHONY: cleanup
-cleanup: ## Cleanup demo
+: ## Cleanup demo
 	@docker compose down
 
 .PHONY: order
@@ -49,7 +37,7 @@ run-order: ## Start order service
 
 .PHONY: feed
 feed: ## Feed data
-	@bash -c 'set -a && source ./.env && set +a && ./scripts/feed_data.sh'
+	@bash -c 'set -a && set +a && ./scripts/feed_data.sh'
 
 .PHONEY: governance
 governance: ## Run governance service

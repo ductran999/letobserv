@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-	"log/slog"
 
 	loader "github.com/ductran999/letobserv/pkg/config"
 	"github.com/ductran999/letobserv/services/inventory/internal/app"
@@ -14,11 +13,13 @@ func main() {
 	if err != nil {
 		log.Fatalln("load config failed", err)
 	}
-	slog.Info("load config successfully!")
 
-	_, err = app.NewApp(cfg)
+	app, err := app.NewApp(cfg)
 	if err != nil {
 		log.Fatalln("init app failed:", err)
 	}
-	slog.Info("app initialized successfully!")
+
+	if err := app.Run(); err != nil {
+		log.Fatalln("run app failed:", err)
+	}
 }
