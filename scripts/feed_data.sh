@@ -3,7 +3,7 @@
 # inventory seeds
 shopt -s nullglob
 
-for f in ./migrations/inventory/seeds/*.sql; do
+for f in ./services/inventory/migrations/seeds/*.sql; do
   echo "Seeding $f"
-  psql "postgres://${DB_USERNAME}:${DB_PASSWORD}@localhost:${DB_PORT}/${DB_INVENTORY_DATABASE}?sslmode=disable" -f "$f"
+  psql "postgres://test:test@localhost:5432/inventory_db?sslmode=disable" -f "$f"
 done

@@ -57,12 +57,14 @@ APM_API_KEY=<your_ingest_api_key>
 5. Start app
 ```bash
 # start order app
-go run cmd/orders/main.go
+cd services/placement
+go run cmd/main.go
 ```
 
 ```bash
 # start inventory app
-go run cmd/inventory/main.go
+cd services/inventory
+go run cmd/main.go
 ```
 
 6. Test place order api

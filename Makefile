@@ -10,13 +10,11 @@ help: ## Show help for each of the Makefile commands
 		/^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' \
 		$(MAKEFILE_LIST)
 
-.PHONY: tidy
-tidy: ## Tidy up the go.mod
-	go mod tidy
-
 .PHONY: lint
 lint: ## Run linters
-	golangci-lint run --timeout 10m --config .golangci.yml
+	cd services/inventory && golangci-lint run ./...
+	cd services/placement && golangci-lint run ./...
+	cd pkg && golangci-lint run ./...
 
 .PHONY: deps
 deps: ## install library
@@ -24,28 +22,16 @@ deps: ## install library
 
 .PHONY: restart 
 restart: ## Reset demo
-	docker-compose down
-	@if [ ! -f .env ]; then \
-		cp .env.example .env; \
-		echo "Copied .env.example → .env"; \
-	else \
-		echo ".env already exists, skipping copy."; \
-	fi
+	docker-compose down -v
 	docker-compose up -d
 
 .PHONY: setup
 setup: ## Setup demo dependencies
-	@if [ ! -f .env ]; then \
-		cp .env.example .env; \
-		echo "Copied .env.example → .env"; \
-	else \
-		echo ".env already exists, skipping copy."; \
-	fi
 	docker-compose up -d
 
 .PHONY: cleanup
 cleanup: ## Cleanup demo
-	@docker compose down
+	@docker compose down -v
 
 .PHONY: order
 run-order: ## Start order service
@@ -53,7 +39,13 @@ run-order: ## Start order service
 
 .PHONY: feed
 feed: ## Feed data
-	@bash -c 'set -a && source ./.env && set +a && ./scripts/feed_data.sh'
+	@bash -c 'set -a && set +a && ./scripts/feed_data.sh'
+
+.PHONEY: governance
+governance: ## Run governance service
+	go mod tidy -v
+	go fmt ./...
+	go vet ./...
 
 .PHONY: api
 api: ## Auto generate api code specify in file api.spec.yml
@@ -62,3 +54,10 @@ api: ## Auto generate api code specify in file api.spec.yml
 	go get github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen
 	go generate ./...
 	go mod tidy
+
+.PHONY: tidy
+tidy:
+	go work sync
+	go mod tidy -C pkg
+	go mod tidy -C services/inventory
+	go mod tidy -C services/placement
