@@ -15,10 +15,10 @@ import (
 	"github.com/ductran999/letobserv/pkg/apm"
 	"github.com/ductran999/letobserv/pkg/database"
 	"github.com/ductran999/letobserv/pkg/logger"
+	"github.com/ductran999/letobserv/pkg/middleware"
 	"github.com/ductran999/letobserv/pkg/txmanager"
 	gen "github.com/ductran999/letobserv/services/inventory/api/gen/openapi"
 	"github.com/ductran999/letobserv/services/inventory/internal/config"
-	"github.com/ductran999/letobserv/services/inventory/internal/middleware"
 	commonhttp "github.com/ductran999/letobserv/services/inventory/internal/modules/common/delivery/http"
 	inventoryhttp "github.com/ductran999/letobserv/services/inventory/internal/modules/inventory/delivery/http/handler"
 	inventoryrepo "github.com/ductran999/letobserv/services/inventory/internal/modules/inventory/infra/repository"
@@ -68,7 +68,7 @@ func NewApp(cfg *config.Config) (*InventoryApp, error) {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
-	router := gin.New()
+	router := gin.Default()
 	if apmAgent != nil {
 		router.Use(otelgin.Middleware(cfg.ServiceName))
 	}
@@ -86,7 +86,7 @@ func NewApp(cfg *config.Config) (*InventoryApp, error) {
 		InventoryHandler: inventoryHdl,
 	})
 
-	internalRouter := gin.New()
+	internalRouter := gin.Default()
 	commonHdl := commonhttp.New(db)
 	internalRouter.GET("/health", commonHdl.HealthCheck)
 	internalRouter.GET("/ready", commonHdl.ReadinessCheck)

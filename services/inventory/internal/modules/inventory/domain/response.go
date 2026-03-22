@@ -1,8 +1,6 @@
-package inventoryuc
+package inventory
 
-import (
-	"time"
-)
+import "time"
 
 type InventoryReservationView struct {
 	ID      string

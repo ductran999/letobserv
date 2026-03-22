@@ -1,12 +1,10 @@
 package inventoryhttp
 
 import (
-	"time"
-
 	"github.com/ductran999/letobserv/pkg/request"
 	"github.com/ductran999/letobserv/pkg/response"
 	gen "github.com/ductran999/letobserv/services/inventory/api/gen/openapi"
-	inventoryuc "github.com/ductran999/letobserv/services/inventory/internal/modules/inventory/usecase"
+	inventory "github.com/ductran999/letobserv/services/inventory/internal/modules/inventory/domain"
 	"github.com/gin-gonic/gin"
 )
 
@@ -19,19 +17,15 @@ type InventoryHandler interface {
 }
 
 type handler struct {
-	inventoryUC inventoryuc.InventoryUsecase
-	startUpAt   time.Time
+	inventoryUC inventory.Usecase
 }
 
-func NewHandler(uc inventoryuc.InventoryUsecase) InventoryHandler {
+func NewHandler(uc inventory.Usecase) InventoryHandler {
 	if uc == nil {
 		panic("inventory cannot be nil")
 	}
 
-	return &handler{
-		inventoryUC: uc,
-		startUpAt:   time.Now(),
-	}
+	return &handler{inventoryUC: uc}
 }
 
 func (hdl *handler) InventoryReserve(c *gin.Context) {
@@ -49,5 +43,5 @@ func (hdl *handler) InventoryReserve(c *gin.Context) {
 		return
 	}
 
-	response.OK(c, ToReservationResponseOpenAPI(reservation), "inventory reserve successfully!")
+	response.OK(c, toReservationResponseOpenAPI(reservation), "inventory reserve successfully!")
 }

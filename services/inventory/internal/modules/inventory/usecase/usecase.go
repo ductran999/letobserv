@@ -10,11 +10,6 @@ import (
 	"github.com/google/uuid"
 )
 
-type InventoryUsecase interface {
-	// ListProducts(ctx context.Context) (*ListProductsOutput, error)
-	InventoryReserve(ctx context.Context, req InventoryReserveInput) (*InventoryReservationView, error)
-}
-
 type inventoryUC struct {
 	txManger txmanager.TransactionManager
 
@@ -26,7 +21,7 @@ func NewInventoryUsecase(
 	txManger txmanager.TransactionManager,
 	productRepo product.Repository,
 	inventoryRepo inventory.InventoryRepo,
-) InventoryUsecase {
+) inventory.Usecase {
 	return &inventoryUC{
 		productRepo:   productRepo,
 		inventoryRepo: inventoryRepo,
@@ -36,8 +31,8 @@ func NewInventoryUsecase(
 
 func (uc *inventoryUC) InventoryReserve(
 	ctx context.Context,
-	req InventoryReserveInput,
-) (*InventoryReservationView, error) {
+	req inventory.InventoryReserveInput,
+) (*inventory.InventoryReservationView, error) {
 	reservations := make([]inventory.InventoryReservation, 0, len(req.Items))
 
 	err := uc.txManger.Do(ctx, func(txContext context.Context) error {
@@ -71,23 +66,5 @@ func (uc *inventoryUC) InventoryReserve(
 		return nil, err
 	}
 
-	return uc.ToInventoryReservationView(reservations), nil
-}
-
-func (uc *inventoryUC) ToInventoryReservationView(reservations []inventory.InventoryReservation,
-) *InventoryReservationView {
-	reserveItems := make([]ReservationItem, 0)
-	for _, rev := range reservations {
-		reserveItems = append(reserveItems, ReservationItem{
-			ProductID: rev.ProductID,
-			Quantity:  rev.Quantity,
-		})
-	}
-
-	return &InventoryReservationView{
-		ID:      reservations[0].ID,
-		OrderID: reservations[0].OrderID,
-		Items:   reserveItems,
-		TTL:     reservations[0].ExpiredAt,
-	}
+	return toInventoryReservationView(reservations), nil
 }

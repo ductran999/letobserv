@@ -1,4 +1,4 @@
-package inventoryuc
+package inventory
 
 type InventoryReserveInput struct {
 	OrderID string

@@ -23,3 +23,10 @@ type InventoryReservation struct {
 	UpdatedAt time.Time
 	ExpiredAt time.Time
 }
+
+type InventoryStock struct {
+	ProductID   string
+	TotalQty    int
+	ReservedQty int
+	UpdatedAt   time.Time
+}
