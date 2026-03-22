@@ -1,13 +1,4 @@
-package consts
-
-const (
-	ProductionEnv = "prod"
-	DeveloperEnv  = "dev"
-	StagingEnv    = "staging"
-
-	LogDebugLevel = "debug"
-	LogInfoLevel  = "info"
-)
+package errs
 
 const (
 	// 5xx - Server errors.
@@ -23,8 +14,4 @@ const (
 	MethodNotAllowed = "METHOD_NOT_ALLOWED"
 	Conflict         = "CONFLICT"
 	TooManyRequests  = "TOO_MANY_REQUESTS"
-)
-
-const (
-	HealthyState = "heathy"
 )

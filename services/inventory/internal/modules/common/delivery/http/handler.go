@@ -10,6 +10,10 @@ import (
 	"gorm.io/gorm"
 )
 
+const (
+	HealthyState = "heathy"
+)
+
 type CommonHandler interface {
 	HealthCheck(c *gin.Context)
 	ReadinessCheck(c *gin.Context)
@@ -37,7 +41,7 @@ func New(db *gorm.DB) CommonHandler {
 func (hdl *handler) HealthCheck(c *gin.Context) {
 	uptime := int64(time.Since(hdl.startupAt).Seconds())
 	resp := gin.H{
-		"status": "Healthy",
+		"status": HealthyState,
 		"uptime": uptime,
 	}
 	response.OK(c, resp, "OK")

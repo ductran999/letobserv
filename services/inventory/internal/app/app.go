@@ -18,10 +18,9 @@ import (
 	"github.com/ductran999/letobserv/pkg/txmanager"
 	gen "github.com/ductran999/letobserv/services/inventory/api/gen/openapi"
 	"github.com/ductran999/letobserv/services/inventory/internal/config"
-	"github.com/ductran999/letobserv/services/inventory/internal/consts"
+	"github.com/ductran999/letobserv/services/inventory/internal/middleware"
 	commonhttp "github.com/ductran999/letobserv/services/inventory/internal/modules/common/delivery/http"
 	inventoryhttp "github.com/ductran999/letobserv/services/inventory/internal/modules/inventory/delivery/http/handler"
-	"github.com/ductran999/letobserv/services/inventory/internal/modules/inventory/delivery/http/middleware"
 	inventoryrepo "github.com/ductran999/letobserv/services/inventory/internal/modules/inventory/infra/repository"
 	inventoryuc "github.com/ductran999/letobserv/services/inventory/internal/modules/inventory/usecase"
 	producthttp "github.com/ductran999/letobserv/services/inventory/internal/modules/product/delivery/http/handler"
@@ -30,7 +29,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
-
 	"gorm.io/gorm"
 )
 
@@ -66,7 +64,7 @@ func NewApp(cfg *config.Config) (*InventoryApp, error) {
 	}
 	slog.Info("initialize logger successfully!")
 
-	if cfg.ServiceEnv == consts.ProductionEnv {
+	if cfg.ServiceEnv == config.ProductionEnv {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
