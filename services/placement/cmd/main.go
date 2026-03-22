@@ -1,26 +1,30 @@
 package main
 
-// loader "github.com/ductran999/letobserv/pkg/config"
-// configs "github.com/ductran999/letobserv/services/placement/internal/config"
+import (
+	"context"
+	"log"
+	"os/signal"
+	"syscall"
+
+	loader "github.com/ductran999/letobserv/pkg/config"
+	"github.com/ductran999/letobserv/services/placement/internal/app"
+	configs "github.com/ductran999/letobserv/services/placement/internal/config"
+)
 
 func main() {
-	// env, err := loader.LoadConfig[configs.Config](".env")
-	// if err != nil {
-	// 	log.Fatalln("failed to load order service config:", err)
-	// }
-	// log.Println(env)
+	cfg, err := loader.LoadConfig[configs.Config](".env")
+	if err != nil {
+		log.Fatalln("load config failed:", err)
+	}
 
-	// app, err := bootstrap.NewOrderBootstrap(env)
-	// if err != nil {
-	// 	log.Fatalln("failed to create new container:", err)
-	// }
+	app, err := app.NewPlacementApp(cfg)
+	if err != nil {
+		log.Fatalln("init app failed:", err)
+	}
 
-	// if err := server.RunHTTP(app, env); err != nil {
-	// 	if env.ApmEnable {
-	// 		if err := app.APMAgent.Shutdown(context.Background()); err != nil {
-	// 			log.Println("shutdown apm error: %w", err)
-	// 		}
-	// 	}
-	// 	log.Fatalln("http server error:", err)
-	// }
+	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	if err := app.Run(ctx); err != nil {
+		log.Fatalln("run app failed:", err)
+	}
+	stop()
 }

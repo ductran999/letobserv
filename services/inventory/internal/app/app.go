@@ -7,9 +7,6 @@ import (
 	"log/slog"
 	"net"
 	"net/http"
-	"os"
-	"os/signal"
-	"syscall"
 	"time"
 
 	"github.com/ductran999/letobserv/pkg/apm"
@@ -97,20 +94,19 @@ func NewApp(cfg *config.Config) (*InventoryApp, error) {
 		logger:   logger,
 		APMAgent: apmAgent,
 		apiServer: &http.Server{
-			Addr:    net.JoinHostPort(cfg.ServiceHost, cfg.ServicePort),
-			Handler: router,
+			Addr:              net.JoinHostPort(cfg.ServiceHost, cfg.ServicePort),
+			Handler:           router,
+			ReadHeaderTimeout: 500 * time.Millisecond,
 		},
 		internalServer: &http.Server{
-			Addr:    net.JoinHostPort("0.0.0.0", "8081"),
-			Handler: internalRouter,
+			Addr:              net.JoinHostPort("0.0.0.0", "8081"),
+			Handler:           internalRouter,
+			ReadHeaderTimeout: 500 * time.Millisecond,
 		},
 	}, nil
 }
 
-func (a *InventoryApp) Run() error {
-	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-
+func (a *InventoryApp) Run(ctx context.Context) error {
 	go func() {
 		slog.Info("api server started", "addr", a.apiServer.Addr)
 		if err := a.apiServer.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
@@ -125,12 +121,32 @@ func (a *InventoryApp) Run() error {
 		}
 	}()
 
-	<-quit
-	slog.Info("shutting down...")
+	<-ctx.Done()
 
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	return a.shutdown(ctx)
+}
+
+func (a *InventoryApp) shutdown(ctx context.Context) error {
+	shutdownCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), 5*time.Second)
 	defer cancel()
 
-	a.internalServer.Shutdown(ctx)
-	return a.apiServer.Shutdown(ctx)
+	if a.internalServer != nil {
+		if err := a.internalServer.Shutdown(shutdownCtx); err != nil {
+			slog.Warn("shutdown internal server failed", "err", err)
+		}
+	}
+
+	if a.apiServer != nil {
+		if err := a.apiServer.Shutdown(shutdownCtx); err != nil {
+			slog.Warn("shutdown api server failed", "err", err)
+		}
+	}
+
+	if a.APMAgent != nil {
+		if err := a.APMAgent.Shutdown(shutdownCtx); err != nil {
+			slog.Warn("shutdown apm agent failed", "err", err)
+		}
+	}
+
+	return nil
 }

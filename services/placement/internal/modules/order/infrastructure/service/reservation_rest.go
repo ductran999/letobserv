@@ -8,7 +8,7 @@ import (
 
 	"github.com/ductran999/letobserv/pkg/httpclient"
 	order "github.com/ductran999/letobserv/services/placement/internal/modules/order/domain"
-	orderuc "github.com/ductran999/letobserv/services/placement/internal/modules/order/usecase"
+	ordersvc "github.com/ductran999/letobserv/services/placement/internal/modules/order/usecase"
 )
 
 const (
@@ -37,7 +37,7 @@ func (svc *inventoryService) Reserve(ctx context.Context, req order.InventoryRes
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		return orderuc.ErrReserveInventory
+		return ordersvc.ErrReserveInventory
 	}
 
 	return nil
@@ -70,7 +70,7 @@ func (svc *inventoryService) GetProduct(
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return orderuc.ErrReserveInventory
+		return ordersvc.ErrReserveInventory
 	}
 
 	return nil

@@ -54,7 +54,7 @@ services:
     restart: "no"
     volumes:
       - ./scripts/migrate_placement_db.sh:/wait-and-migrate.sh
-      - ./migrations/orders/schemas:/migrations
+      - ./services/placement/migrations/schemas:/migrations
     networks:
       - localnet
 

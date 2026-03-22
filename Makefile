@@ -12,7 +12,9 @@ help: ## Show help for each of the Makefile commands
 
 .PHONY: lint
 lint: ## Run linters
-	golangci-lint run --timeout 10m --config .golangci.yml
+	cd services/inventory && golangci-lint run ./...
+	cd services/placement && golangci-lint run ./...
+	cd pkg && golangci-lint run ./...
 
 .PHONY: deps
 deps: ## install library
@@ -28,8 +30,8 @@ setup: ## Setup demo dependencies
 	docker-compose up -d
 
 .PHONY: cleanup
-: ## Cleanup demo
-	@docker compose down
+cleanup: ## Cleanup demo
+	@docker compose down -v
 
 .PHONY: order
 run-order: ## Start order service

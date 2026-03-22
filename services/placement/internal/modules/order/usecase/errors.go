@@ -1,4 +1,4 @@
-package orderuc
+package ordersvc
 
 import "errors"
 

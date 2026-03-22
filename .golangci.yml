@@ -206,6 +206,7 @@ linters:
     - intrange
     - tagalign
     - wsl_v5
+    - nilnil
 
   exclusions:
     rules:
