@@ -1,0 +1,19 @@
+all: false
+filename: mocks_test.go
+force-file-write: true
+formatter: goimports
+generate: true
+include-auto-generated: false
+log-level: info
+structname: '{{.Mock}}{{.InterfaceName}}'
+pkgname: '{{.SrcPackageName}}'
+recursive: true
+require-template-schema-exists: true
+template: testify
+template-schema: '{{.Template}}.schema.json'
+
+packages:
+  github.com/ductran999/letobserv/services/placement/internal/modules/order/domain:
+    config:
+      all: true
+      dir: "services/placement/mocks"
