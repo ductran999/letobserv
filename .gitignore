@@ -30,3 +30,6 @@ logs/
 .vscode/
 .docker
 api/generated
+
+.scannerwork
+sonar-project.properties
