@@ -1,12 +1,12 @@
 all: false
-filename: mocks_test.go
+filename: mock_test.go
 force-file-write: true
 formatter: goimports
 generate: true
 include-auto-generated: false
 log-level: info
 structname: '{{.Mock}}{{.InterfaceName}}'
-pkgname: '{{.SrcPackageName}}'
+pkgname: 'mocks'
 recursive: true
 require-template-schema-exists: true
 template: testify
@@ -16,4 +16,12 @@ packages:
   github.com/ductran999/letobserv/services/placement/internal/modules/order/domain:
     config:
       all: true
-      dir: "services/placement/mocks"
+      dir: "services/placement/mocks/order"
+  github.com/ductran999/letobserv/services/inventory/internal/modules/inventory/domain:
+    config:
+      all: true
+      dir: "services/inventory/mocks/inventory"
+  github.com/ductran999/letobserv/services/inventory/internal/modules/product/domain:
+    config:
+      all: true
+      dir: "services/inventory/mocks/product"

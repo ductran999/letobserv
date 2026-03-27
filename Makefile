@@ -55,6 +55,12 @@ api: ## Auto generate api code specify in file api.spec.yml
 	go generate ./...
 	go mod tidy
 
+.PHONEY: mock
+mock: ## generate mock
+	find . -type d -name mocks -exec rm -rf {} +
+	mockery
+	$(MAKE) tidy
+
 .PHONY: tidy
 tidy:
 	go work sync
